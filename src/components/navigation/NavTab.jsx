@@ -1,0 +1,126 @@
+import HomeScreen from "../../screens/home-screen/HomeScreen";
+import RecordScreen from "../../screens/record-screen/RecordScreen";
+import IngredientScreen from "../../screens/ingredient-screen/IngredientScreen";
+import GoalScreen from "../../screens/goal-screen/GoalScreen";
+import SettingScreen from "../../screens/setting-screen/SettingScreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { COLORS } from "../../configs/constants/colors";
+import { Image, StyleSheet, View } from "react-native";
+import { ICONS } from "../../configs/constants/graphic";
+
+const Tab = createBottomTabNavigator()
+
+const Tabs = () => {
+    return (
+        <Tab.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { display: "none" },
+                headerShown: false,
+                tabBarStyle: {
+                    position: 'absolute',
+                    // left: 38,
+                    // right: 38,
+                    alignSelf: "center",
+                    width: 336,
+                    bottom: 31,
+                    height: 55,
+                    borderRadius: 19,
+                    backgroundColor: COLORS.bgNav,
+                }
+            }}
+        >
+            <Tab.Screen
+                name="home"
+                component={HomeScreen}
+                options={{
+                    tabBarLabelStyle: { display: "none", height: 0 },
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.iconContainer}>
+                            <Image
+                                source={ICONS.home}
+                                resizeMethod="contain"
+                                style={[{ width: 26, height: 26, marginTop: 12 },
+                                { tintColor: focused ? COLORS.iconActive : COLORS.iconDefault }
+                                ]}
+                            />
+                        </View>
+                    ),
+                }}
+            />
+            <Tab.Screen name="record" component={RecordScreen}
+                options={{
+                    tabBarLabelStyle: { display: "none" },
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.iconContainer}>
+                            <Image
+                                source={ICONS.record}
+                                resizeMethod="contain"
+                                style={[{ width: 22, height: 26, marginTop: 12 },
+                                { tintColor: focused ? COLORS.iconActive : COLORS.iconDefault }
+                                ]}
+                            />
+                        </View>
+                    ),
+                }}
+            />
+            <Tab.Screen name="add" component={IngredientScreen}
+                options={{
+                    tabBarLabelStyle: { display: "none" },
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.iconContainer}>
+                            <Image
+                                source={ICONS.add}
+                                resizeMethod="contain"
+                                style={[{ width: 34, height: 34, marginTop: 12 },
+                                { tintColor: focused ? 'white' : COLORS.iconDefault }
+                                ]}
+                            />
+                        </View>
+                    ),
+                }}
+            />
+            <Tab.Screen name="goal" component={GoalScreen}
+                options={{
+                    tabBarLabelStyle: { display: "none" },
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.iconContainer}>
+                            <Image
+                                source={ICONS.goal}
+                                resizeMethod="contain"
+                                style={[{ width: 27, height: 27, marginTop: 12 },
+                                { tintColor: focused ? COLORS.iconActive : COLORS.iconDefault }
+                                ]}
+                            />
+                        </View>
+                    ),
+                }}
+            />
+            <Tab.Screen name="setting" component={SettingScreen}
+                options={{
+                    tabBarLabelStyle: { display: "none" },
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.iconContainer}>
+                            <Image
+                                source={ICONS.setting}
+                                resizeMethod="contain"
+                                style={[{ width: 28, height: 28, marginTop: 12 },
+                                { tintColor: focused ? COLORS.iconActive : COLORS.iconDefault }
+                                ]}
+                            />
+                        </View>
+                    ),
+                }}
+            />
+        </Tab.Navigator>
+    )
+}
+
+const styles = StyleSheet.create({
+    iconContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        // backgroundColor: 'red',
+    },
+})
+
+export default Tabs
