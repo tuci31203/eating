@@ -1,5 +1,5 @@
 import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import HomeChart from './HomeChart'
 import Meal from '../meal/Meal'
 
@@ -22,8 +22,10 @@ const Carousel = () => {
             goal: 2,
         },
     ]
+    const [index, setIndex] = useState(0)
     const _spacing = 20
     const _width = 329
+    const handleScroll = ({ nativeEvent }) => setIndex(Math)
     return (
         <View>
             <FlatList
@@ -38,8 +40,9 @@ const Carousel = () => {
                 renderItem={({ item }) => <HomeChart variant={item.variant} inData={item.inData} goal={item.goal} />}
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                onScroll={handleScroll}
             />
-            
+
         </View>
     )
 }
