@@ -7,6 +7,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../configs/constants/colors";
 import { Image, StyleSheet, View } from "react-native";
 import { ICONS } from "../../configs/constants/graphic";
+import IngredientConfirmScreen from "../../screens/ingredient-confirm-screen/IngredientConfirmScreen";
+import SnackIngredient from "./SnackIngredient";
 
 const Tab = createBottomTabNavigator()
 
@@ -17,15 +19,20 @@ const Tabs = () => {
                 tabBarLabelStyle: { display: "none" },
                 headerShown: false,
                 tabBarStyle: {
+                    // /*
                     position: 'absolute',
-                    // left: 38,
-                    // right: 38,
-                    alignSelf: "center",
-                    width: 336,
                     bottom: 31,
+
+                    marginHorizontal: 38,
+
+                    elevation: 0,
+                    zIndex: 3,
+                    // alignSelf: "center",
+                    // width: 336,
                     height: 55,
                     borderRadius: 19,
                     backgroundColor: COLORS.bgNav,
+                    // */
                 }
             }}
         >
@@ -33,7 +40,7 @@ const Tabs = () => {
                 name="home"
                 component={HomeScreen}
                 options={{
-                    tabBarLabelStyle: { display: "none", height: 0 },
+                    tabBarLabelStyle: { display: "none" },
                     tabBarIcon: ({ focused }) => (
                         <View style={styles.iconContainer}>
                             <Image
@@ -63,15 +70,24 @@ const Tabs = () => {
                     ),
                 }}
             />
-            <Tab.Screen name="add" component={IngredientScreen}
+            <Tab.Screen name="add" component={SnackIngredient}
                 options={{
+                    tabBarStyle: { display: "none" },
                     tabBarLabelStyle: { display: "none" },
                     tabBarIcon: ({ focused }) => (
-                        <View style={styles.iconContainer}>
+                        <View style={[styles.iconContainer,
+                        {
+                            width: 64,
+                            height: 64,
+                            borderRadius: 32,
+                            backgroundColor: COLORS.plusBtn,
+                            marginTop: 17
+                        }
+                        ]}>
                             <Image
                                 source={ICONS.add}
                                 resizeMethod="contain"
-                                style={[{ width: 34, height: 34, marginTop: 12 },
+                                style={[{ width: 34, height: 34, },
                                 { tintColor: focused ? 'white' : COLORS.iconDefault }
                                 ]}
                             />
@@ -119,7 +135,6 @@ const styles = StyleSheet.create({
     iconContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        // backgroundColor: 'red',
     },
 })
 

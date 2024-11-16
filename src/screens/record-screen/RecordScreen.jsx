@@ -1,11 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import ScreenView from '../../components/ScreenView'
+import GreetText from '../../components/GreetText'
 
 const RecordScreen = () => {
     return (
-        <View>
-            <Text>RecordScreen</Text>
-        </View>
+        <ScreenView>
+            <GreetText>
+                Your intake record
+            </GreetText>
+        </ScreenView>
     )
 }
 

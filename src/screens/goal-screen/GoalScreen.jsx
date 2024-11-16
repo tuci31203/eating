@@ -1,11 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import ScreenView from '../../components/ScreenView'
+import GreetText from '../../components/GreetText'
 
 const GoalScreen = () => {
     return (
-        <View>
-            <Text>GoalScreen</Text>
-        </View>
+        <ScreenView>
+            <GreetText>
+                Your goal
+            </GreetText>
+        </ScreenView>
     )
 }
 

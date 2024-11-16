@@ -16,7 +16,8 @@ export const COLORS = {
 
     colCalory: '#ffdc9b',
     colWater: '#9bd2ff',
-    colCalory: '#a0ff9b',
+    colFiber: '#a0ff9b',
 
     border: '#9a796d',
+    blink: '#c89b7a'
 }

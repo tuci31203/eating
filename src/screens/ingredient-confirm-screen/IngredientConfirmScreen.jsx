@@ -7,29 +7,23 @@ import IngredientList from '../../components/ingredient/IngredientList'
 import Button from '../../components/Button'
 import CameraButton from '../../components/camera-button/CameraButton'
 import { StateContext } from '../../context/StateContext'
+import IngredientConfirm from '../../components/ingredient-confirm/IngredientConfirm'
+import ConfirmList from '../../components/ingredient-confirm/confirmList'
 
-const IngredientScreen = ({ navigation }) => {
+const IngredientConfirmScreen = ({ navigation }) => {
     // const [ingredients, setIngredients] = useState(defaultIngredients)
     const {
         selectedIngredients,
         setSelectedIngredients,
-        ingredients,
-        setIngredients,
-        defaultIngredients
     } = useContext(StateContext)
-
     useEffect(() => {
-        console.log("INGREDIENT SCREEN changes >>> ")
-        // setIngredients(defaultIngredients)
-    }, [ingredients])
+        console.log("INGREDIENT CONFIRM SCREEN")
+    }, [])
 
     const selectIngredients = () => {
-        const selected = ingredients.filter(each => each.chosen === true).map(({ chosen, ...rest }) => rest)
-        if (selected.length > 0) {
-            setSelectedIngredients(selected)
-            console.log(selected)
-            navigation.navigate("confirm")
-        }
+        // const selected = ingredients.filter(each => each.chosen === true).map(({ id, ...rest }) => rest)
+        // setSelectedIngredients(selected)
+        console.log("Ấn rồi")
     }
 
     return (
@@ -44,39 +38,37 @@ const IngredientScreen = ({ navigation }) => {
                     marginTop: 27,
                     flex: 1,
                     marginBottom: 300,
-                    // overflow: 'scroll'
                 }}>
 
-                    <IngredientList
-                        ingredients={ingredients}
-                        setIngredients={setIngredients}
+                    <ConfirmList
+                        ingredients={selectedIngredients}
+                        setIngredients={setSelectedIngredients}
                     />
                 </View>
             </ScreenView>
             <Button
-                title={"Recipes"}
+                title={"back"}
                 variant='default'
                 style={[
                     styles.botBut,
-                    { left: 40 }
+                    { left: 52 }
                 ]}
+                onPress={() => navigation.navigate("ingre")}
             />
             <Button
-                title={"Add"}
+                title={"Confirm"}
                 variant='action'
                 style={[
                     styles.botBut,
-                    { right: 52 }
+                    { right: 51 }
                 ]}
                 onPress={selectIngredients}
-            />
-            <CameraButton
             />
         </>
     )
 }
 
-export default IngredientScreen
+export default IngredientConfirmScreen
 
 const styles = StyleSheet.create({
     botBut: {

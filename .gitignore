@@ -36,3 +36,6 @@ yarn-error.*
 
 # files
 assets/
+
+*.txt
+api.json

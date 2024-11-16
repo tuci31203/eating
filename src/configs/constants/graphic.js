@@ -8,6 +8,7 @@ export const ICONS = {
     home: require('../../../assets/home.png'),
     record: require('../../../assets/record.png'),
     setting: require('../../../assets/setting.png'),
+    camera: require('../../../assets/camera.png'),
 }
 
 export const NUTRIENTS = {
