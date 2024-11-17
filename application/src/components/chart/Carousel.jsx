@@ -2,9 +2,16 @@ import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import HomeChart from './HomeChart'
 import Meal from '../meal/Meal'
+import { COLORS } from '../../configs/constants/colors'
+import { getCurrentWeekDates } from '../../utils/getWeekDate'
 
 const { width } = Dimensions.get('screen')
 const Carousel = () => {
+    const [date, setDate] = useState(() => {
+        const dates = getCurrentWeekDates()
+        // console.log(dates)
+        return `${dates.start} - ${dates.end}`
+    })
     const input = [
         {
             variant: "Calory",
@@ -25,7 +32,11 @@ const Carousel = () => {
     const [index, setIndex] = useState(0)
     const _spacing = 20
     const _width = 329
-    const handleScroll = ({ nativeEvent }) => setIndex(Math)
+    const handleScroll = ({ nativeEvent }) => {
+        const tmp = Math.round(nativeEvent.contentOffset.x / (_width + _spacing))
+        // console.log(tmp)
+        setIndex(tmp)
+    }
     return (
         <View>
             <FlatList
@@ -43,10 +54,47 @@ const Carousel = () => {
                 onScroll={handleScroll}
             />
 
+            <View style={styles.dots}>
+                <View
+                    style={[styles.indicator, index === 0 && styles.active]}
+                ></View>
+                <View
+                    style={[styles.indicator, index === 1 && styles.active]}
+                ></View>
+                <View
+                    style={[styles.indicator, index === 2 && styles.active]}
+                ></View>
+            </View>
+            <Text style={styles.dates}>{date}</Text>
+
         </View>
     )
 }
 
 export default Carousel
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    dots: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 16,
+        gap: 12,
+    },
+    indicator: {
+        height: 12,
+        width: 12,
+        backgroundColor: "#F1F1F1",
+        borderRadius: 6,
+    },
+    active: {
+        backgroundColor: "#F4DFCA",
+    },
+    dates: {
+        color: COLORS.textDate,
+        fontFamily: "Inter-Bold",
+        fontSize: 16,
+        // backgroundColor: 'pink',
+        textAlign: 'center',
+        marginTop: 15
+    }
+})

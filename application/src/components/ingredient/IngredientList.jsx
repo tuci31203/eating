@@ -1,9 +1,11 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import IngredientItem from './IngredientItem'
+import { useRoute } from '@react-navigation/native'
 
 const IngredientList = ({ ingredients, setIngredients }) => {
-
+    const [count, setCount] = useState(0)
+    const route = useRoute()
 
     const generateId = () => {
         const maxId = Math.max(...ingredients.map(item => item.id), 0);
@@ -20,10 +22,14 @@ const IngredientList = ({ ingredients, setIngredients }) => {
 
     useEffect(() => {
         if (ingredients.length === 1 && ingredients[0].name === '') {
-            console.log("None >>> ")
+            // console.log("None >>> ")
             return
         }
-        console.log("Update length", ingredients.length)
+        if (route.params?.from === 'IngredientConfirmScreen') {
+            return;
+        }
+        setCount(prev => prev + 1)
+        // console.log("Update length", ingredients.length)
         const lastItem = ingredients[ingredients.length - 1]
         if (lastItem && lastItem.name.trim() !== '') {
             setIngredients(prev => [...prev, createEmptyIngredient()]);

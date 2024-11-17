@@ -3,11 +3,8 @@ import React, { useContext, useEffect } from 'react'
 import ScreenView from '../../components/ScreenView'
 import GreetText from '../../components/GreetText'
 import Xmark from '../../components/navigation/Xmark'
-import IngredientList from '../../components/ingredient/IngredientList'
 import Button from '../../components/Button'
-import CameraButton from '../../components/camera-button/CameraButton'
 import { StateContext } from '../../context/StateContext'
-import IngredientConfirm from '../../components/ingredient-confirm/IngredientConfirm'
 import ConfirmList from '../../components/ingredient-confirm/confirmList'
 
 const IngredientConfirmScreen = ({ navigation }) => {
@@ -33,12 +30,14 @@ const IngredientConfirmScreen = ({ navigation }) => {
                     Ingredients 🍗
                 </GreetText>
                 <Xmark />
-                <View style={{
-                    marginHorizontal: 30,
-                    marginTop: 27,
-                    flex: 1,
-                    marginBottom: 300,
-                }}>
+                <View
+                    style={{
+                        marginHorizontal: 30,
+                        marginTop: 27,
+                        flex: 1,
+                        // backgroundColor: 'pink',
+                        marginBottom: 400,
+                    }}>
 
                     <ConfirmList
                         ingredients={selectedIngredients}
@@ -53,7 +52,7 @@ const IngredientConfirmScreen = ({ navigation }) => {
                     styles.botBut,
                     { left: 52 }
                 ]}
-                onPress={() => navigation.navigate("ingre")}
+                onPress={() => navigation.navigate("ingre", { from: 'IngredientConfirmScreen' })}
             />
             <Button
                 title={"Confirm"}

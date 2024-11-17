@@ -2,6 +2,7 @@ export const COLORS = {
     text: '#4b1704',
     textWater: '#3b045b',
     textFiber: '#5b2d04',
+    textDate: '#B07762',
 
     bg: '#fffdfc',
     bgCalory: '#fffaf5',
@@ -19,5 +20,6 @@ export const COLORS = {
     colFiber: '#a0ff9b',
 
     border: '#9a796d',
-    blink: '#c89b7a'
+    blink: '#c89b7a',
+
 }

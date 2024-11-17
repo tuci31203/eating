@@ -1,4 +1,4 @@
-const getCurrentWeekDates = () => {
+export const getCurrentWeekDates = () => {
     const today = new Date();
     const currentDay = today.getDay();
 
@@ -20,11 +20,11 @@ const getCurrentWeekDates = () => {
 
     return {
         start: formatDate(monday),
-        end: formatDate(sunday)
+        end: formatDate(sunday),
+        monday: monday,
     };
 }
 
-// // Usage example
-// const weekDates = getCurrentWeekDates();
+
 // console.log(`${weekDates.start} - ${weekDates.end}`);
 // // Output: "Nov 11 - Nov 17"

@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native'
-import React, { useContext, useEffect } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import ScreenView from '../../components/ScreenView'
 import GreetText from '../../components/GreetText'
 import Xmark from '../../components/navigation/Xmark'
@@ -7,6 +7,7 @@ import IngredientList from '../../components/ingredient/IngredientList'
 import Button from '../../components/Button'
 import CameraButton from '../../components/camera-button/CameraButton'
 import { StateContext } from '../../context/StateContext'
+import { useRoute } from '@react-navigation/native'
 
 const IngredientScreen = ({ navigation }) => {
     // const [ingredients, setIngredients] = useState(defaultIngredients)
@@ -23,11 +24,12 @@ const IngredientScreen = ({ navigation }) => {
         // setIngredients(defaultIngredients)
     }, [ingredients])
 
+
     const selectIngredients = () => {
         const selected = ingredients.filter(each => each.chosen === true).map(({ chosen, ...rest }) => rest)
         if (selected.length > 0) {
             setSelectedIngredients(selected)
-            console.log(selected)
+            // console.log(selected)
             navigation.navigate("confirm")
         }
     }

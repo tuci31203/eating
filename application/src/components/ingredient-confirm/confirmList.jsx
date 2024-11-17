@@ -12,6 +12,7 @@ const ConfirmList = () => {
         <FlatList
             data={selectedIngredients}
             keyExtractor={item => item.id.toString()}
+            showsVerticalScrollIndicator={false}
             renderItem={({ item }) =>
                 <IngredientConfirm
                     name={item.name}
