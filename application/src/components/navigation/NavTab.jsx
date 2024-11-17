@@ -5,14 +5,24 @@ import GoalScreen from "../../screens/goal-screen/GoalScreen";
 import SettingScreen from "../../screens/setting-screen/SettingScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../configs/constants/colors";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ICONS } from "../../configs/constants/graphic";
 import IngredientConfirmScreen from "../../screens/ingredient-confirm-screen/IngredientConfirmScreen";
 import SnackIngredient from "./SnackIngredient";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator()
 
 const Tabs = () => {
+    const navigation = useNavigation()
+    const resetToHome = () => {
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'home' }]
+            })
+        )
+    }
     return (
         <Tab.Navigator
             screenOptions={{
@@ -51,6 +61,15 @@ const Tabs = () => {
                                 ]}
                             />
                         </View>
+                    ),
+                    tabBarButton: (props) => (
+                        <TouchableOpacity
+                            {...props}
+                            onPress={() => {
+                                resetToHome();
+                                props.onPress();
+                            }}
+                        />
                     ),
                 }}
             />

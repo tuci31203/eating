@@ -4,7 +4,6 @@ import IngredientItem from './IngredientItem'
 import { useRoute } from '@react-navigation/native'
 
 const IngredientList = ({ ingredients, setIngredients }) => {
-    const [count, setCount] = useState(0)
     const route = useRoute()
 
     const generateId = () => {
@@ -28,7 +27,6 @@ const IngredientList = ({ ingredients, setIngredients }) => {
         if (route.params?.from === 'IngredientConfirmScreen') {
             return;
         }
-        setCount(prev => prev + 1)
         // console.log("Update length", ingredients.length)
         const lastItem = ingredients[ingredients.length - 1]
         if (lastItem && lastItem.name.trim() !== '') {
