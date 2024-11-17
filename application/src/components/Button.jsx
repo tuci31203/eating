@@ -10,7 +10,7 @@ import {
 
 const Button = ({
     title,
-    variant = 'default', // 'default' | 'action'
+    variant = 'default', // 'default' | 'action' | 'mealDef' | 'mealAct'
     onPress,
     style,
     textStyle,
@@ -72,7 +72,41 @@ const styles = StyleSheet.create({
     actionText: {
         color: 'white',
         fontSize: 20,
-        fontWeight: '500',
+        fontFamily: 'Inter-SemiBold',
+    },
+
+    mealDef: {
+        backgroundColor: '#FFF',
+        ...Platform.select({
+            ios: {
+                shadowColor: 'rgba(0, 0, 0, 0.25)',
+                shadowOffset: {
+                    width: 0,
+                    height: 0,
+                },
+                shadowOpacity: 1,
+                shadowRadius: 5,
+            },
+            android: {
+                elevation: 2,
+                shadowColor: '#000000',
+            },
+        }),
+    },
+    mealDefText: {
+        color: '#4B1704',
+        fontSize: 20,
+        fontFamily: 'Inter-SemiBold',
+    },
+    mealAct: {
+        backgroundColor: '#FFF',
+        borderWidth: 3,
+        borderColor: '#F89B5F',
+    },
+    mealActText: {
+        color: '#4B1704',
+        fontSize: 20,
+        fontFamily: 'Inter-SemiBold',
     },
     // Default variant styles
     default: {
@@ -96,7 +130,7 @@ const styles = StyleSheet.create({
     defaultText: {
         color: '#DD5929',
         fontSize: 20,
-        fontWeight: '500',
+        fontFamily: 'Inter-SemiBold',
     },
     // Disabled state
     disabled: {
