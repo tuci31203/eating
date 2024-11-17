@@ -6,6 +6,7 @@ import { COLORS } from '../../configs/constants/colors'
 import HomeChart from '../../components/chart/HomeChart'
 import Carousel from '../../components/chart/Carousel'
 import ScreenView from '../../components/ScreenView'
+import MealList from '../../components/meal/MealList'
 
 const { width, height } = Dimensions.get("screen")
 
@@ -16,6 +17,7 @@ const HomeScreen = () => {
                 <View style={{ gap: 38 }}>
                     <GreetText>What do you eat today?</GreetText>
                     <Carousel />
+                    <MealList />
                 </View>
             </ScrollView>
         </ScreenView>
