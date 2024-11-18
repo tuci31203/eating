@@ -3,8 +3,6 @@ import React, { createContext, useState } from 'react';
 export const StateContext = createContext();
 
 export const StateProvider = ({ children }) => {
-
-
     const defaultIngredients = [
         {
             id: 1,
@@ -16,6 +14,7 @@ export const StateProvider = ({ children }) => {
     ]
     const [selectedIngredients, setSelectedIngredients] = useState([]);
     const [ingredients, setIngredients] = useState(defaultIngredients)
+    const [dayInfo, setDayInfo] = useState({})
 
     return (
         <StateContext.Provider
@@ -24,7 +23,9 @@ export const StateProvider = ({ children }) => {
                 setSelectedIngredients,
                 ingredients,
                 setIngredients,
-                defaultIngredients
+                defaultIngredients,
+                dayInfo,
+                setDayInfo,
             }}
         >
             {children}

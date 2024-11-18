@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ScreenView from '../../components/ScreenView'
 import GreetText from '../../components/GreetText'
+import MyCalendar from '../../components/calendar/Calendar'
 
 const RecordScreen = () => {
     return (
@@ -9,6 +10,7 @@ const RecordScreen = () => {
             <GreetText>
                 Your intake record
             </GreetText>
+            <MyCalendar />
         </ScreenView>
     )
 }
