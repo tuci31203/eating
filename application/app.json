@@ -2,6 +2,10 @@
   "expo": {
     "name": "eating",
     "slug": "eating",
+    "extra": {
+      "IMAGE_MODEL": "https://hub.ultralytics.com/models/tKyF92FxPJYcF8DbCEKZ",
+      "API_KEY": "5cd2d8847f4196e615f7c3d9e5ee1498cfdb8d80ae"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
