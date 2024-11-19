@@ -20,8 +20,8 @@ const MyCalendar = () => {
                     console.log('selected day', day);
                 }}
                 theme={{
-                    backgroundColor: COLORS.bg,
-                    calendarBackground: '#ffffff',
+                    backgroundColor: 'transparent',
+                    calendarBackground: 'transparent',
                     textSectionTitleColor: '#9F7A6C',
                     textSectionTitleDisabledColor: '#9F7A6C',
                     selectedDayBackgroundColor: '#EDB092',
@@ -41,8 +41,6 @@ const MyCalendar = () => {
                     textDayFontSize: 20,
                     textMonthFontSize: 24,
                     textDayHeaderFontSize: 14,
-                    arrowHeight: 23,
-                    arrowWidth: 23,
                 }}
             />
         </View>
@@ -53,10 +51,12 @@ export default MyCalendar
 
 const styles = StyleSheet.create({
     container: {
-        padding: 8,
+        paddingHorizontal: 10,
+        paddingBottom: 10,
+        paddingTop: 5,
         borderWidth: 2,
         borderColor: COLORS.text,
-        borderRadius: 14,
+        borderRadius: 22,
         marginHorizontal: 26,
         marginTop: 29,
     }

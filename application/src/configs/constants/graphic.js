@@ -13,9 +13,10 @@ export const ICONS = {
 
 export const NUTRIENTS = {
     calory: require('../../../assets/calory.png'),
-    carb: require('../../../assets/carb.png'),
+    carbs: require('../../../assets/carbs.png'),
     fat: require('../../../assets/fat.png'),
     fiber: require('../../../assets/fiber.png'),
     protein: require('../../../assets/protein.png'),
     water: require('../../../assets/water.png'),
+    sugar: require('../../../assets/sugar.png'),
 }
