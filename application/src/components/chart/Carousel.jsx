@@ -1,17 +1,23 @@
 import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import HomeChart from './HomeChart'
 import Meal from '../meal/Meal'
 import { COLORS } from '../../configs/constants/colors'
 import { getCurrentWeekDates } from '../../utils/getWeekDate'
+import { StateContext } from '../../context/StateContext'
 
 const { width } = Dimensions.get('screen')
 const Carousel = () => {
+    const { week, setWeek } = useContext(StateContext)
     const [date, setDate] = useState(() => {
         const dates = getCurrentWeekDates()
-        // console.log(dates)
+        // setWeek(`${dates.start} - ${dates.end}`)
         return `${dates.start} - ${dates.end}`
     })
+    useEffect(() => {
+        setWeek(date)
+    }, [date])
+
     const input = [
         {
             variant: "Calory",
