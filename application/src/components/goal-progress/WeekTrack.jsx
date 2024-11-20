@@ -1,51 +1,35 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NutrientItem from '../nutrient-icons/NutrientItem'
 import { COLORS } from '../../configs/constants/colors'
 import { thousandDecimal } from '../../utils/thousandDecimal'
 import { thousandShorten } from '../../utils/thousandShorten'
+import { THRESHOLDS } from '../../configs/constants/threshold'
 
 const WeekTrack = ({ name, amount, goal }) => {
     const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    const [compare, setCompare] = useState(() => {
-        return amount.map((item, index) => {
-            if (item === 0) return 0
-            if (name === "Calory") return thousandDecimal(item - goal)
-            else return item - goal
-        })
-    })
-    const [judge, setJudge] = useState(() => {
-        return amount.map((item) => {
+    const calculateCompare = (item) => {
+        if (item === 0) return 0
+        return name === "Calory" ? thousandDecimal(item - goal) : item - goal
+    }
+    const judgeValue = (item) => {
+        if (item === 0) return "none"
 
-            if (item === 0) return "none"
-            const tmp = item - goal
-            const tobe = Math.abs(tmp)
-            switch (name) {
-                case "Calory":
-                    if (tobe <= 200) return "good"
-                    break
-                case "Carbs":
-                    if (tobe <= 80) return "good"
-                    break
-                case "Protein":
-                    if (tobe <= 80) return "good"
-                    break
-                case "Fat":
-                    if (tobe <= 15) return "good"
-                    break
-                case "Water":
-                    if (tobe <= 300) return "good"
-                    break
-                case "Fiber":
-                    if (tobe <= 8) return "good"
-                    break
-                default: if (tobe <= 15) return "good"
-            }
-            // if (Math.abs(tmp) / goal < 0.3) return "good"
-            if (tmp < 0) return "less"
-            return "more"
-        })
-    })
+        const tmp = item - goal
+        const threshold = THRESHOLDS[name]
+        const tobe = Math.abs(tmp)
+
+        if (tobe <= threshold) return "good"
+        if (tmp < 0) return "less"
+        return "more"
+    }
+    const [compare, setCompare] = useState(() => amount.map(calculateCompare))
+    const [judge, setJudge] = useState(() => amount.map(judgeValue))
+
+    useEffect(() => {
+        setCompare(amount.map(calculateCompare))
+        setJudge(amount.map(judgeValue))
+    }, [amount, goal])
     return (
         <View style={styles.container}>
             <View style={styles.row}>

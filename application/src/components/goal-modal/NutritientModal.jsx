@@ -64,7 +64,7 @@ const NutritionInputModal = ({ visible, onClose, onSave, initialValues = {} }) =
     return (
         <Modal
             visible={visible}
-            animationType={Platform.OS === "ios" ? "slide" : "fade"}
+            animationType="fade"
             transparent={true}
             statusBarTranslucent={true}
             onRequestClose={onClose}
@@ -159,6 +159,11 @@ const styles = StyleSheet.create({
         borderColor: "#c2b1ab",
         borderRadius: 8,
         paddingHorizontal: 12,
+        ...Platform.select({
+            ios: {
+                paddingVertical: 8,
+            }
+        })
     },
     input: {
         flex: 1,

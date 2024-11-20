@@ -36,11 +36,11 @@ const GoalScreen = () => {
         },
         {
             name: "Sugar",
-            amount: [10, 20, 300, 40, 0, 0,],
+            amount: [10, 20, 300, 40, 0, 0, 0],
         },
         {
             name: "Protein",
-            amount: [150, 100, 129, 500, 0, 0],
+            amount: [150, 100, 129, 500, 0, 0, 0],
         },
 
 
