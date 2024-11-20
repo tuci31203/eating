@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import Meal from './Meal'
+import { StateContext } from '../../context/StateContext'
 
 const MealList = () => {
+    const { dayInfo, setDayInfo } = useContext(StateContext)
     const meals = {
         "breakfast": {
             "mealId": 1,
