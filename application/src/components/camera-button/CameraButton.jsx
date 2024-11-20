@@ -4,9 +4,10 @@ import { ICONS } from '../../configs/constants/graphic'
 import * as ImagePicker from 'expo-image-picker';
 import { StateContext } from '../../context/StateContext';
 import { uploadImage } from '../../configs/networking/image-model/uploadImage';
+import LoadingOverlay from '../loading-overlay/LoadingOverlay';
 
 const CameraButton = () => {
-    const [photo, setPhoto] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const { ingredients, setIngredients } = useContext(StateContext)
 
     const captureImage = async () => {
@@ -17,8 +18,8 @@ const CameraButton = () => {
         });
 
         if (!result.canceled) {
-            setPhoto(result.assets[0]);
-            const ingres = await uploadImage(result.assets[0]);
+            // setPhoto(result.assets[0]);
+            const ingres = await uploadImage(result.assets[0], setIsLoading);
             if (ingres && ingres.length > 0) setIngredients(ingres);
         }
     };
@@ -39,6 +40,7 @@ const CameraButton = () => {
                     ]}
                 />
             </TouchableOpacity>
+            <LoadingOverlay isVisible={isLoading} />
         </View>
     )
 }

@@ -1,9 +1,10 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import * as Font from 'expo-font';
 import Tabs from './src/components/navigation/NavTab';
 import { useEffect } from 'react';
 import { StateProvider } from './src/context/StateContext';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function App() {
   const [fontsLoaded] = Font.useFonts({
@@ -31,9 +32,13 @@ export default function App() {
   }
   return (
     <StateProvider>
+      {/* <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, height: '100%' }} edges={['right', 'left', 'top', 'bottom']}> */}
       <NavigationContainer>
         <Tabs />
       </NavigationContainer>
+      {/* </SafeAreaView>
+      </SafeAreaProvider> */}
     </StateProvider>
   );
 }

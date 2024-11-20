@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_KEY, IMAGE_MODEL } from '@env';
 import { capitalizeFirstLetter } from "../../../utils/capitalizeLetter";
 
-export const uploadImage = async (image) => {
+export const uploadImage = async (image, setIsLoading) => {
     const formData = new FormData();
     formData.append('model', IMAGE_MODEL);
     formData.append('imgsz', '640');
@@ -15,6 +15,7 @@ export const uploadImage = async (image) => {
     });
 
     try {
+        setIsLoading(true);
         const response = await axios.post('https://predict.ultralytics.com', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -45,5 +46,7 @@ export const uploadImage = async (image) => {
     } catch (error) {
         console.error('Error uploading image:', error.response?.data || error.message);
         return
+    } finally {
+        setIsLoading(false);
     }
 }

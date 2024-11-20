@@ -4,7 +4,13 @@ import { COLORS } from '../configs/constants/colors'
 
 const GreetText = ({ children }) => {
     return (
-        <View style={{ marginTop: 46, paddingLeft: 30, paddingRight: 30, }}>
+        <View style={{
+            // marginTop: 10,
+            // any marginbottom of 150 return to 100 __ without safe area view
+            marginTop: 46,
+            paddingLeft: 30,
+            paddingRight: 30,
+        }}>
             <Text
                 style={{
                     fontSize: 36,
