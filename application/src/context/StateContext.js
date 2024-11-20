@@ -15,6 +15,7 @@ export const StateProvider = ({ children }) => {
     const [selectedIngredients, setSelectedIngredients] = useState([]);
     const [ingredients, setIngredients] = useState(defaultIngredients)
     const [dayInfo, setDayInfo] = useState({})
+    const [week, setWeek] = useState('')
 
     return (
         <StateContext.Provider
@@ -26,6 +27,8 @@ export const StateProvider = ({ children }) => {
                 defaultIngredients,
                 dayInfo,
                 setDayInfo,
+                week,
+                setWeek,
             }}
         >
             {children}
