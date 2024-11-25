@@ -10,14 +10,20 @@ const Xmark = () => {
     const { ingredients, setIngredients, defaultIngredients, selectedIngredients, setSelectedIngredients } = useContext(StateContext)
 
     const handleClose = () => {
-        setIngredients(() => { return defaultIngredients })
-        setSelectedIngredients([])
-        navigation.dispatch(
-            CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'home' }]
-            })
-        )
+        const currRoute = navigation.getState().routes[navigation.getState().index].name
+        // console.log(currRoute)
+        if (currRoute === "recipes") {
+            navigation.goBack()
+        } else {
+            setIngredients(() => { return defaultIngredients })
+            setSelectedIngredients([])
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'home' }]
+                })
+            )
+        }
     }
     return (
         <TouchableOpacity

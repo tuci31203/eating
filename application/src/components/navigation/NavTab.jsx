@@ -25,6 +25,7 @@ const Tabs = () => {
     }
     return (
         <Tab.Navigator
+            initialRouteName="home"
             screenOptions={{
                 tabBarLabelStyle: { display: "none" },
                 headerShown: false,
