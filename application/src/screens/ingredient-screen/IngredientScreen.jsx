@@ -1,13 +1,10 @@
 import { StyleSheet, View } from 'react-native'
 import React, { useCallback, useContext, useEffect } from 'react'
-import ScreenView from '../../components/ScreenView'
-import GreetText from '../../components/GreetText'
-import Xmark from '../../components/navigation/Xmark'
 import IngredientList from '../../components/ingredient/IngredientList'
-import Button from '../../components/Button'
 import CameraButton from '../../components/camera-button/CameraButton'
 import { StateContext } from '../../context/StateContext'
 import { useRoute } from '@react-navigation/native'
+import { Button, GreetText, ScreenView, Xmark } from '../../components'
 
 const IngredientScreen = ({ navigation }) => {
     // const [ingredients, setIngredients] = useState(defaultIngredients)
@@ -33,6 +30,9 @@ const IngredientScreen = ({ navigation }) => {
             navigation.navigate("confirm")
         }
     }
+    const searchRecipes = () => {
+        navigation.navigate("recipes")
+    }
 
     return (
         <>
@@ -56,6 +56,7 @@ const IngredientScreen = ({ navigation }) => {
                     styles.botBut,
                     { left: 40 }
                 ]}
+                onPress={searchRecipes}
             />
             <Button
                 title={"Add"}

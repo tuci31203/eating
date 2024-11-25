@@ -1,13 +1,9 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { ScrollView } from 'react-native'
-import GreetText from '../../components/GreetText'
-import { COLORS } from '../../configs/constants/colors'
-import HomeChart from '../../components/chart/HomeChart'
 import Carousel from '../../components/chart/Carousel'
-import ScreenView from '../../components/ScreenView'
 import MealList from '../../components/meal/MealList'
-
+import { GreetText, ScreenView } from '../../components'
 const { width, height } = Dimensions.get("screen")
 
 const HomeScreen = () => {

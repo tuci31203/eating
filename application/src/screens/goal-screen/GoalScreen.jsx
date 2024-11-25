@@ -1,7 +1,6 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import ScreenView from '../../components/ScreenView'
-import GreetText from '../../components/GreetText'
+import { ScreenView, GreetText } from '../../components'
 import ModalButton from '../../components/goal-modal/ModalButton'
 import InfoDay from '../../components/day-info-goal/InfoDay'
 import GoalList from '../../components/goal-progress/GoalList'
