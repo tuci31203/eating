@@ -18,7 +18,3 @@ Using the scripts provided in this directory, you can create a local PostgreSQL 
 ```DATABASE_URL="postgres://<YOUR_USERNAME>:<YOUR_PASSWORD>@localhost:5432/eating```.
 4. Run `node server.js` in a terminal to start the NodeJS server.
 5. Run `node test-client.js` in another terminal to create a CLI client that tests every endpoint of the API. This script will add a new user into the database and request every API endpoint. Before each request, the script waits until you press the key "C" before continuing so that you have time to examine the database after the previous request.
-
-## Known issues
-
-When the testing procedure described above is performed, it can be seen in the console output that some endpoints perform database operations successfully but subsequently return an error related to circular references. They return both a response object (with the expected success status code and data) and an error object (with an error status code). This is likely a problem with the test client code.

@@ -5,18 +5,6 @@ const fs = require('fs');
 const path = require('path');
 const { response } = require('express');
 
-
-// Create output directory
-const outputDir = path.join(__dirname, 'test-client-output');
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir);
-}
-
-function saveToFile(filename, data) {
-  fs.writeFileSync(path.join(outputDir, filename), JSON.stringify(data, null, 2));
-}
-
-
 // Create a test user
 require('dotenv').config({ path: '../.env' });
 
@@ -47,14 +35,12 @@ async function testGetTodayMeals(userId) {
       status: response.status,
       statusText: response.statusText
     });
-    saveToFile('getTodayMealsResponse.json', response);
   } catch (error) {
     console.error('Error with GET /getTodayMeals request:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
-    saveToFile('getTodayMealsError.json', error);
   }
 }
 
@@ -69,14 +55,12 @@ async function testGetMealById(meal_id) {
       status: response.status,
       statusText: response.statusText
     });
-    saveToFile(`getMealByIdResponse_${meal_id}.json`, response);
   } catch (error) {
     console.error(`Error with GET /getMealbyId request for meal ID ${meal_id}:`, {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
-    saveToFile(`getMealByIdError_${meal_id}.json`, error);
   }
 }
 
@@ -91,14 +75,12 @@ async function testGetNutrientCount(ingredients) {
       status: response.status,
       statusText: response.statusText
     });
-    saveToFile('getNutrientCountResponse.json', response);
   } catch (error) {
     console.error('Error with POST /getNutrientCount request:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
-    saveToFile('getNutrientCountError.json', error);
   }
 }
 
@@ -142,14 +124,12 @@ async function testUpdateMeal(meal_id, type, ingredients, datetime, user_id) {
       status: response.status,
       statusText: response.statusText
     });
-    saveToFile(`updateMealResponse_${meal_id}.json`, response);
   } catch (error) {
     console.error('Error with PUT /updateMeal request:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
-    saveToFile(`updateMealError_${meal_id}.json`, error);
   }
 }
 
@@ -164,14 +144,12 @@ async function testDeleteMeal(meal_id) {
       status: response.status,
       statusText: response.statusText
     });
-    saveToFile(`deleteMealResponse_${meal_id}.json`, response);
   } catch (error) {
     console.error('Error with DELETE /deleteMeal request:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
-    saveToFile(`deleteMealError_${meal_id}.json`, error);
   }
 }
 
@@ -189,14 +167,12 @@ async function testGetRecipes(ingredients, requireAllIngredients) {
       status: response.status,
       statusText: response.statusText
     });
-    saveToFile(`getRecipesResponse_${Date.now()}.json`, response);
   } catch (error) {
     console.error('Error with GET /getRecipes request:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
-    saveToFile(`getRecipesError_${Date.now()}.json`, error);
   }
 }
 
