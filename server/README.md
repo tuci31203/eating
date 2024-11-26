@@ -10,17 +10,15 @@ Please refer to the documentation in the file `server.js`. More human-friendly d
 
 ## Testing the API
 
-You can create a local PostgreSQL database, a local NodeJS server, and a local test client using the scripts provided in this directory. to test the API
+Using the scripts provided in this directory, you can create a local PostgreSQL database, a local NodeJS server, and a local CLI client to test the API. Here are the steps:
 
 1. Create a PostgreSQL database named `eating` using pgAdmin. Then run the file `schema.sql` to create the tables.
 2. To add some data to the database, run the file `data.sql`.
 3. Create a `.env` file in the root directory of the repository and add the following line:
 ```DATABASE_URL="postgres://<YOUR_USERNAME>:<YOUR_PASSWORD>@localhost:5432/eating```.
 4. Run `node server.js` in a terminal to start the NodeJS server.
-5. Run `node test-client.js` in another terminal to create a CLI client that tests every endpoint of the API.
+5. Run `node test-client.js` in another terminal to create a CLI client that tests every endpoint of the API. This script will add a new user into the database and request every API endpoint. Before each request, the script waits until you press the key "C" before continuing so that you have time to examine the database after the previous request.
 
 ## Known issues
 
-1. Accoring to the testing procedure described above, some endpoints perform database operations successfully but subsequently return an error related to circular references. They return both a response object (with the expected success status code and data) and an error object (with an error status code).
-
-2. According to the testing procedure described above, the endpoint `getRecipes` is not working.
+When the testing procedure described above is performed, it can be seen in the console output that some endpoints perform database operations successfully but subsequently return an error related to circular references. They return both a response object (with the expected success status code and data) and an error object (with an error status code). This is likely a problem with the test client code.

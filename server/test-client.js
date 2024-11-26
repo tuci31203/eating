@@ -43,7 +43,7 @@ async function testGetTodayMeals(userId) {
       params: { user_id: userId }
     });
     console.log('GET /getTodayMeals Response:', {
-      data: response.data,
+      data: JSON.stringify(response.data, null, 2),
       status: response.status,
       statusText: response.statusText
     });
@@ -59,24 +59,24 @@ async function testGetTodayMeals(userId) {
 }
 
 // Function to test GET endpoint for meal by ID
-async function testGetMealById(id) {
+async function testGetMealById(meal_id) {
   try {
     const response = await axios.get(`${baseURL}/getMealbyId`, {
-      params: { id }
+      params: { meal_id }
     });
-    console.log(`GET /getMealbyId Response for meal ID ${id}:`, {
-      data: response.data,
+    console.log(`GET /getMealbyId Response for meal ID ${meal_id}:`, {
+      data: JSON.stringify(response.data, null, 2),
       status: response.status,
       statusText: response.statusText
     });
-    saveToFile(`getMealByIdResponse_${id}.json`, response);
+    saveToFile(`getMealByIdResponse_${meal_id}.json`, response);
   } catch (error) {
-    console.error(`Error with GET /getMealbyId request for meal ID ${id}:`, {
+    console.error(`Error with GET /getMealbyId request for meal ID ${meal_id}:`, {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
-    saveToFile(`getMealByIdError_${id}.json`, error);
+    saveToFile(`getMealByIdError_${meal_id}.json`, error);
   }
 }
 
@@ -128,12 +128,12 @@ async function testCreateMeal(type, user_id, ingredients, datetime = new Date(),
 }
 
 // Function to test PUT endpoint for updating a meal
-async function testUpdateMeal(meal_id, type, user_id, ingredients) {
+async function testUpdateMeal(meal_id, type, ingredients, datetime, user_id) {
   try {
     const response = await axios.put(`${baseURL}/updateMeal`, {
       meal_id,
       type,
-      datetime: new Date(),
+      datetime,
       user_id,
       ingredients
     });
@@ -176,16 +176,16 @@ async function testDeleteMeal(meal_id) {
 }
 
 // Function to test GET endpoint for getting recipes by ingredients
-async function testGetRecipes(ingredients, all = true) {
+async function testGetRecipes(ingredients, requireAllIngredients) {
   try {
     const response = await axios.get(`${baseURL}/getRecipes`, {
       params: {
-        ingredients: ingredients,
-        all
+        ingredients,
+        requireAllIngredients,
       }
     });
     console.log('GET /getRecipes Response:', {
-      data: response.data,
+      data: JSON.stringify(response.data, null, 2),
       status: response.status,
       statusText: response.statusText
     });
@@ -262,13 +262,13 @@ function pause(message) {
   ]);
 
   await pause(`\nPress "C" to update meal with ID ${meal2Id} with new ingredients (should get status code 200)...`);
-  await testUpdateMeal(meal2Id, 'Updated Breakfast', userId, [
+  await testUpdateMeal(meal2Id, 'Updated Breakfast', [
     { name: 'carrot', amount: 150 },
     { name: 'bacon', amount: 250 }
   ]);
 
   await pause('\nPress "C" to update a non-existent meal (should get status code 404)...');
-  await testUpdateMeal(9999, 'Non-existent Meal', userId, [
+  await testUpdateMeal(9999, 'Non-existent Meal', [
     { name: 'beef', amount: 150 },
     { name: 'bacon', amount: 250 }
   ]);
@@ -304,14 +304,17 @@ function pause(message) {
   await pause('\nPress "C" to delete meal without providing a meal ID (should get status code 400)...');
   await testDeleteMeal();
 
-  await pause('\nPress "C" to get recipes for valid ingredients with all=true (should get status code 200)...');
-  await testGetRecipes(["apple", "tomato", "beef"], true);
+  await pause('\nPress "C" to get recipes for valid ingredients with requireAllIngredients=true (should get status code 200)...');
+  await testGetRecipes('apple,tomato', true);
 
-  await pause('\nPress "C" to get recipes for valid ingredients with all=false (should get status code 200)...');
-  await testGetRecipes(["apple", "tomato", "beef"], false);
+  await pause('\nPress "C" to get recipes for valid ingredients with requireAllIngredients=false (should get status code 200)...');
+  await testGetRecipes('apple,tomato', '0');
+
+  await pause('\nPress "C" to get all recipes by not specifying ingredients (should get status code 200)...');
+  await testGetRecipes('', 1);
 
   await pause('\nPress "C" to get recipes for invalid ingredients (should get status code 400)...');
-  await testGetRecipes(["invalidIngredient1", "invalidIngredient2"]);
+  await testGetRecipes('invalidIngredient1,invalidIngredient2', 'fAlSe');
 
   console.log('\nAll tests completed.');
 })();
