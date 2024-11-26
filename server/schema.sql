@@ -50,7 +50,7 @@ CREATE TABLE public.ingredient (
 CREATE TABLE public.ingredient_contains_nutrient (
     ingredient_id integer NOT NULL,
     nutrient_id integer NOT NULL,
-    amount numeric(10,2)
+    amount numeric(10,4)
 );
 
 
@@ -81,7 +81,7 @@ ALTER SEQUENCE public.ingredient_ingredient_id_seq OWNED BY public.ingredient.in
 CREATE TABLE public.meal (
     meal_id integer NOT NULL,
     type character varying(20) NOT NULL,
-    datetime timestamp without time zone NOT NULL,
+    datetime timestamp with time zone NOT NULL,
     user_id integer NOT NULL
 );
 
@@ -323,6 +323,14 @@ ALTER TABLE ONLY public.recipe_includes_ingredient
 
 ALTER TABLE ONLY public.recipe
     ADD CONSTRAINT recipe_pkey PRIMARY KEY (recipe_id);
+
+
+--
+-- Name: ingredient unique_ingredient_name; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ingredient
+    ADD CONSTRAINT unique_ingredient_name UNIQUE (name);
 
 
 --
