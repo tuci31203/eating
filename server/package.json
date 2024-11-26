@@ -1,5 +1,5 @@
 {
-  "name": "database",
+  "name": "eating",
   "version": "1.0.0",
   "description": "database server for Eating app",
   "main": "index.js",
