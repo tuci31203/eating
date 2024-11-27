@@ -21,6 +21,6 @@ export const NUTRIENTS = {
     sugar: require('../../../assets/sugar.png'),
 }
 
-export const ANIMS = {
-    searching: require('../../../assets/animation/searching.json')
-}
+// export const ANIMS = {
+//     searching: require('../../../assets/animation/searching.json')
+// }
