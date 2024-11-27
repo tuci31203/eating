@@ -84,6 +84,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 30,
         marginTop: 27,
         flex: 1,
-        marginBottom: 300,
+        marginBottom: 230,
     }
 })
