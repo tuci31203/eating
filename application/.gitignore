@@ -39,4 +39,3 @@ yarn-error.*
 assets/
 
 *.txt
-api.json
