@@ -2,11 +2,17 @@
 
 ## Overview
 
-This server is built using Node.js and provides several API endpoints for authentication, managing meals, calculating nutrients, and searching recipes. It connects to a PostgreSQL database to store and retrieve data.
+This web server is built using Node.js and provides several API endpoints for authentication, managing meals, calculating nutrients, and searching recipes. It connects to a PostgreSQL database to store and retrieve data.
 
 ## API Endpoints Documentation
 
-Please refer to the documentation in the file `server.js`. More human-friendly documentation will be added here in the future.
+Please refer to the documentation in the file `server.js` for detailed descriptions of endpoints. Refer to the local API testing scripts described in the section below for example usage. More human-friendly documentation may be added here in the future.
+
+### Note on retrying requests
+
+All endpoints of this web server currently do not retry on any failure (such as database transaction failure and network errors); therefore, the client is responsible for implementing retrying logic.
+
+The server guarantees that repeating a request does not produce undesirable effects in the database. For example, when serving an `createMeal` request, there is a possibility that after all necessary inserts into the database have succeeded, the web server encounters an error and returns a response with code 500 to the client. In this case, if the client requests `updateMeal` with the same parameter values again, the server will return a 409 response because a meal with the same user id, type, and datetime truncated to minute already exists in the database, ensuring the meal is not unintentionally duplicated in the database.
 
 ## Testing the API locally
 
