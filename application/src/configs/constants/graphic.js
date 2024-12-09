@@ -9,6 +9,7 @@ export const ICONS = {
     record: require('../../../assets/record.png'),
     setting: require('../../../assets/setting.png'),
     camera: require('../../../assets/camera.png'),
+    logout: require('../../../assets/logout.png'),
 }
 
 export const NUTRIENTS = {
@@ -24,3 +25,5 @@ export const NUTRIENTS = {
 export const ANIMS = {
     searching: require('../../../assets/animation/searching.json')
 }
+
+export const AVA = require('../../../assets/adaptive-icon.png')
