@@ -4,6 +4,8 @@
 
 This web server is built using Node.js and provides several API endpoints for authentication, managing meals, calculating nutrients, and searching recipes. It connects to a PostgreSQL database to store and retrieve data.
 
+The web server is deployed at https://eating-aa9c7969e33d.herokuapp.com/.
+
 ## API Endpoints Documentation
 
 Please refer to the documentation in the file `server.js` for detailed descriptions of endpoints. Refer to the local API testing scripts described in the section below for example usage. More human-friendly documentation may be added here in the future.
