@@ -31,11 +31,11 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Access denied' });
   }
 
-  jwt.verify(token, JWT_SECRET_KEY, (err, user) => {
+  jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
     if (err) {
       return res.status(403).json({ error: 'Invalid token' });
     }
-    req.user = user;
+    req.user = decoded.userId;
     next();
   });
 };
