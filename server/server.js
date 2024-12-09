@@ -35,7 +35,7 @@ const authenticateToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({ error: 'Invalid token' });
     }
-    req.user = decoded.userId;
+    req.headers['user_id'] = decoded.userId;
     next();
   });
 };
@@ -166,6 +166,48 @@ app.post('/api/logIn', async (req, res) => {
 
 
 /**
+ * @api {get} /api/getAllIngredients Get all ingredients
+ * @apiName GetAllIngredients
+ * @apiGroup Ingredient
+ * 
+ * @apiSuccess {Object[]} ingredients List of all ingredients.
+ * @apiSuccess {Number} ingredients.ingredient_id Ingredient ID.
+ * @apiSuccess {String} ingredients.name Ingredient name.
+ * @apiSuccess {String} ingredients.unit_name Ingredient unit name.
+ * 
+ * @apiError (500) ServerError An error occurred on the server.
+ */
+app.get('/api/getAllIngredients', async (req, res) => {
+  let client;
+
+  try {
+    client = await db.connect();
+    await client.query('START TRANSACTION ISOLATION LEVEL SERIALIZABLE READ ONLY DEFERRABLE');
+
+    const result = await client.query(`
+      SELECT ingredient_id, name, unit_name
+      FROM ingredient
+    `);
+
+    await client.query('COMMIT');
+    return res.status(200).json(result.rows);
+  }
+  catch (err) {
+    if (client) {
+      await client.query('ROLLBACK');
+    }
+    console.error('Error in /api/getAllIngredients:', err);
+    return res.status(500).json({ error: 'Server Error' });
+  }
+  finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
+
+/**
  * @api {post} /api/getNutrientCount Get the total amount of nutrients in a list of ingredients
  * @apiName GetNutrientCount
  * @apiGroup Nutrient
@@ -245,7 +287,7 @@ app.post('/api/getNutrientCount', async (req, res) => {
  * @apiName GetTodayMeals
  * @apiGroup Meal
  * 
- * @apiParam {String} user_id User's unique ID.
+ * @apiHeader {String} Authorization JWT token.
  * 
  * @apiSuccess {Object[]} meals List of today's meals.
  * @apiSuccess {Number} meals.meal_id Meal ID.
@@ -262,11 +304,7 @@ app.post('/api/getNutrientCount', async (req, res) => {
  * @apiError (500) ServerError An error occurred on the server.
  */
 app.get('/api/getTodayMeals', authenticateToken, async (req, res) => {
-  const userId = req.query.user_id;
-
-  if (!userId) {
-    return res.status(400).json({ error: 'Missing user_id parameter' });
-  }
+  const userId = req.headers['user_id'];
 
   let client;
 
@@ -323,6 +361,8 @@ app.get('/api/getTodayMeals', authenticateToken, async (req, res) => {
  * 
  * @apiParam {String} meal_id Meal's unique ID.
  * 
+ * @apiHeader {String} Authorization JWT token.
+ * 
  * @apiSuccess {Number} meal_id Meal ID.
  * @apiSuccess {String} type Meal type.
  * @apiSuccess {String} datetime Meal datetime.
@@ -333,12 +373,13 @@ app.get('/api/getTodayMeals', authenticateToken, async (req, res) => {
  * 
  * @apiError (400) BadRequest Missing meal_id parameter.
  * @apiError (401) Unauthorized Access denied.
- * @apiError (403) Forbidden Invalid token.
+ * @apiError (403) Forbidden Access denied.
  * @apiError (404) NotFound Meal not found.
  * @apiError (500) ServerError An error occurred on the server.
  */
 app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
   const mealId = req.query.meal_id;
+  const userId = req.headers['user_id'];
 
   if (!mealId) {
     return res.status(400).json({ error: 'Missing meal_id parameter' });
@@ -353,12 +394,13 @@ app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
       SELECT  m.meal_id, 
               m.type, 
               m.datetime,
+              m.user_id,  -- Select user_id for validation
               JSONB_AGG(JSONB_BUILD_OBJECT('name', i.name, 'amount', mi.amount, 'unit_name', i.unit_name)) AS ingredients
       FROM meal m
         LEFT JOIN meal_includes_ingredient mi ON m.meal_id = mi.meal_id
         LEFT JOIN ingredient i ON mi.ingredient_id = i.ingredient_id
       WHERE m.meal_id = $1
-      GROUP BY m.meal_id, m.type, m.datetime
+      GROUP BY m.meal_id, m.type, m.datetime, m.user_id
     `, [mealId]);
 
     if (result.rows.length === 0) {
@@ -366,8 +408,17 @@ app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Meal not found' });
     }
 
+    const meal = result.rows[0];
+    if (meal.user_id !== userId) {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Remove user_id from the response data
+    delete meal.user_id;
+
     await client.query('COMMIT');
-    return res.status(200).json(result.rows[0]);
+    return res.status(200).json(meal);
   }
   catch (err) {
     if (client) {
@@ -391,11 +442,12 @@ app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
  * 
  * @apiParam {String} type Meal type ("breakfast", "lunch", "dinner", or "snack").
  * @apiParam {Date|String} datetime Meal datetime.
- * @apiParam {Number} user_id User ID.
  * @apiParam {Object[]} [ingredients] List of ingredients.
  * @apiParam {String} ingredients.name Ingredient name.
  * @apiParam {Number} ingredients.amount Ingredient amount.
  * @apiParam {Boolean} [aggregate=false] Whether to aggregate ingredient amounts automatically if duplicates are found.
+ * 
+ * @apiHeader {String} Authorization JWT token.
  * 
  * @apiSuccess {Number} meal_id ID of the created meal.
  * 
@@ -409,11 +461,12 @@ app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
  * @apiError (500) ServerError An error occurred on the server.
  */
 app.post('/api/createMeal', authenticateToken, async (req, res) => {
-  const { type, datetime, user_id, ingredients, aggregate = false } = req.body;
+  const { type, datetime, ingredients, aggregate = false } = req.body;
+  const user_id = req.headers['user_id'];
 
-  // Check if type or user_id is not provided
-  if (!type || !user_id || !datetime) {
-    return res.status(400).json({ error: 'Missing meal type, user id, or time' });
+  // Check if type or datetime is not provided
+  if (!type || !datetime) {
+    return res.status(400).json({ error: 'Missing meal type or datetime' });
   }
 
   // Aggregate ingredient amounts or respond with an error if duplicates are found
@@ -510,11 +563,12 @@ app.post('/api/createMeal', authenticateToken, async (req, res) => {
  * @apiParam {Number} meal_id Meal ID.
  * @apiParam {String} [type] Meal type.
  * @apiParam {Date|String} [datetime] Meal datetime.
- * @apiParam {Number} [user_id] User ID.
  * @apiParam {Object[]} [ingredients] List of ingredients.
  * @apiParam {String} ingredients.name Ingredient name.
  * @apiParam {Number} ingredients.amount Ingredient amount.
  * @apiParam {Boolean} [aggregate=false] Whether to aggregate ingredient amounts if duplicates are found.
+ * 
+ * @apiHeader {String} Authorization JWT token.
  * 
  * @apiSuccess {String} message Success message.
  * 
@@ -529,7 +583,8 @@ app.post('/api/createMeal', authenticateToken, async (req, res) => {
  * @apiError (500) ServerError An error occurred on the server.
  */
 app.put('/api/updateMeal', authenticateToken, async (req, res) => {
-  const { meal_id, type, datetime, user_id, ingredients, aggregate = false } = req.body;
+  const { meal_id, type, datetime, ingredients, aggregate = false } = req.body;
+  const user_id = req.headers['user_id'];
 
   // Check if meal_id is provided
   if (!meal_id) {
@@ -588,22 +643,39 @@ app.put('/api/updateMeal', authenticateToken, async (req, res) => {
       updateFieldTexts.push(`datetime = $${fieldIndex++}`);
       updateValues.push(datetime);
     }
-    if (user_id) {
-      updateFieldTexts.push(`user_id = $${fieldIndex++}`);
-      updateValues.push(user_id);
-    }
 
     if (updateFieldTexts.length > 0) {
       let updateMealDetailsResult = await client.query(`
         UPDATE meal
         SET ${updateFieldTexts.join(', ')}
         WHERE meal_id = $1
-        RETURNING 1
+        RETURNING user_id
       `, [meal_id, ...updateValues]);
       // if no rows are updated, the meal_id does not exist in the database
       if (updateMealDetailsResult.rows.length === 0) {
         await client.query('ROLLBACK');
         return res.status(404).json({ error: 'Meal not found in database' });
+      }
+      // if the user_id in the database does not match the user_id in the JWT, return a 403 Forbidden error
+      if (updateMealDetailsResult.rows[0].user_id !== user_id) {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ error: 'Access denied' });
+      }
+    }
+    else {
+      // if no meal details are updated, check if the meal exists and if the user_id matches the user_id in the JWT
+      const mealResult = await client.query(`
+        SELECT user_id
+        FROM meal
+        WHERE meal_id = $1
+      `, [meal_id]);
+      if (mealResult.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return res.status(404).json({ error: 'Meal not found in database' });
+      }
+      if (mealResult.rows[0].user_id !== user_id) {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ error: 'Access denied' });
       }
     }
 
@@ -662,6 +734,8 @@ app.put('/api/updateMeal', authenticateToken, async (req, res) => {
  * 
  * @apiParam {Number} meal_id Meal ID.
  * 
+ * @apiHeader {String} Authorization JWT token.
+ * 
  * @apiSuccess {String} message Success message.
  * 
  * @apiError (400) BadRequest Meal ID not provided.
@@ -672,6 +746,7 @@ app.put('/api/updateMeal', authenticateToken, async (req, res) => {
  */
 app.delete('/api/deleteMeal', authenticateToken, async (req, res) => {
   const { meal_id } = req.body;
+  const user_id = req.headers['user_id'];
 
   if (!meal_id) {
     return res.status(400).json({ error: 'Meal ID is required' });
@@ -684,18 +759,21 @@ app.delete('/api/deleteMeal', authenticateToken, async (req, res) => {
 
     await client.query('');
 
-    // Begin transaction and delete the meal if it exists
     await client.query('START TRANSACTION ISOLATION LEVEL SERIALIZABLE');
   
     const deleteResult = await client.query(`
       DELETE FROM meal
       WHERE meal_id = $1
-      RETURNING 1
+      RETURNING user_id
     `, [meal_id]);
   
     if (deleteResult.rows.length === 0) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Meal ID not found' });
+    }
+    else if (deleteResult.rows[0].user_id !== user_id) {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ error: 'Access denied' });
     }
   
     await client.query('COMMIT');

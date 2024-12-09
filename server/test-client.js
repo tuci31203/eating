@@ -76,10 +76,9 @@ async function testLogIn(username, password) {
 
 
 // Function to test GET endpoint for today's meals
-async function testGetTodayMeals(userId, token) {
+async function testGetTodayMeals(token) {
   try {
     const response = await axios.get(`${baseURL}/getTodayMeals`, {
-      params: { user_id: userId },
       headers: token ? { Authorization: `Bearer ${token}` } : undefined
     });
     console.log('GET /getTodayMeals Response:', {
@@ -118,12 +117,11 @@ async function testGetMealById(meal_id, token) {
 }
 
 // Function to test POST endpoint for creating a meal
-async function testCreateMeal(type, user_id, ingredients, token, datetime = new Date(), aggregate = false) {
+async function testCreateMeal(type, ingredients, token, datetime = new Date(), aggregate = false) {
   try {
     const response = await axios.post(`${baseURL}/createMeal`, {
       type,
       datetime,
-      user_id,
       ingredients,
       aggregate
     }, {
@@ -145,13 +143,12 @@ async function testCreateMeal(type, user_id, ingredients, token, datetime = new 
 }
 
 // Function to test PUT endpoint for updating a meal
-async function testUpdateMeal(meal_id, type, ingredients, token, datetime, user_id) {
+async function testUpdateMeal(meal_id, type, ingredients, token, datetime) {
   try {
     const response = await axios.put(`${baseURL}/updateMeal`, {
       meal_id,
       type,
       datetime,
-      user_id,
       ingredients
     }, {
       headers: token ? { Authorization: `Bearer ${token}` } : undefined
@@ -274,27 +271,27 @@ function pause(message) {
   let meal1Id, meal2Id, meal3Id, meal4Id, meal5Id, meal6Id, meal7Id;
 
   await pause('\nPress "C" to create a meal with duplicate ingredients without aggregate (should get status code 400)...');
-  meal1Id = await testCreateMeal('Snack', userId, [
+  meal1Id = await testCreateMeal('Snack', [
     { name: 'carrot', amount: 100 },
     { name: 'carrot', amount: 200 },
     { name: 'apple', amount: 200 }
   ], token);
 
   await pause('\nPress "C" to create a meal with duplicate ingredients with aggregate (should get status code 201)...');
-  meal2Id = await testCreateMeal('Snack', userId, [
+  meal2Id = await testCreateMeal('Snack', [
     { name: 'carrot', amount: 100 },
     { name: 'carrot', amount: 200 },
     { name: 'apple', amount: 200 }
   ], token, new Date(), true);
 
   await pause('\nPress "C" to create another valid meal with today\'s date (should get status code 201)...');
-  meal3Id = await testCreateMeal('Lunch', userId, [
+  meal3Id = await testCreateMeal('Lunch', [
     { name: 'asparagus', amount: 400 }
   ], token);
 
   const yesterdayTimestamp = new Date(Date.now() - 86400000);
   await pause('\nPress "C" to create a valid meal with yesterday\'s date (should get status code 201)...');
-  meal4Id = await testCreateMeal('Yesterday Dinner', userId, [
+  meal4Id = await testCreateMeal('Yesterday Dinner', [
     { name: 'banana', amount: 600 },
     { name: 'broccoli', amount: 500 }
   ], token, yesterdayTimestamp);
@@ -302,29 +299,28 @@ function pause(message) {
   await pause('\nPress "C" to create another meal like Yesterday Dinner but with datetime added or substracted by 10 seconds such that minute is not changed (should get status code 409)...');
   meal5Id = await testCreateMeal(
     'Yesterday Dinner',
-    userId,
     [{ name: 'banana', amount: 600 }],
     token,
     new Date(yesterdayTimestamp.getMinutes() < 30 ? yesterdayTimestamp.getTime() + 10000 : yesterdayTimestamp.getTime() - 10000)
   );
 
   await pause('\nPress "C" to create a meal without providing a token (should get status code 401)...');
-  meal6Id = await testCreateMeal('Yesterday Dinner', userId, [
+  meal6Id = await testCreateMeal('Yesterday Dinner', [
     { name: 'banana', amount: 600 },
     { name: 'broccoli', amount: 500 }
   ], undefined, yesterdayTimestamp, true);
 
   await pause('\nPress "C" to create a meal with an invalid token (should get status code 403)...');
-  meal7Id = await testCreateMeal('Another Dinner Today', userId, [
+  meal7Id = await testCreateMeal('Another Dinner Today', [
     { name: 'banana', amount: 600 },
     { name: 'broccoli', amount: 500}
   ], 'invalidToken');
 
   await pause('\nPress "C" to get today\'s meals (should get status code 200: 1 snack and 1 lunch, no yesterday dinner)...');
-  await testGetTodayMeals(userId, token);
+  await testGetTodayMeals(token);
 
   await pause('\nPress "C" to create a meal with non-existent ingredients (should get status code 400)...');
-  await testCreateMeal('Snack', userId, [
+  await testCreateMeal('Snack', [
     { name: 'invalidIngredient1', amount: 100 },
     { name: 'apple', amount: 200 }
   ], token);
