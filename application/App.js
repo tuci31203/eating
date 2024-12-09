@@ -2,11 +2,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet, Text } from 'react-native';
 import * as Font from 'expo-font';
 import Tabs from './src/components/navigation/NavTab';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { StateProvider } from './src/context/StateContext';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import LoginScreen from './src/screens/login-screen/LoginScreen';
 
 export default function App() {
+  const [isAppReady, setIsAppReady] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Trạng thái kiểm tra người dùng đã đăng nhập chưa
+
+
   const [fontsLoaded] = Font.useFonts({
     'Inter-Black': require('./assets/fonts/Inter-Black.ttf'),
     'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
@@ -30,6 +35,12 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
+  if (!isLoggedIn) {
+    // Hiển thị màn hình LoginScreen nếu chưa đăng nhập
+    return <LoginScreen onLoginSuccess={() => setIsLoggedIn(true)} />;
+  
+  }
   return (
     <StateProvider>
       {/* <SafeAreaProvider>
@@ -45,3 +56,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
 });
+
+
+
+
