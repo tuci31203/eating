@@ -2,30 +2,25 @@ import { StyleSheet, Text, View, TextInput } from "react-native";
 import React from "react";
 import ScreenView from "../../components/ScreenView";
 import { useState } from "react";
-// import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from "../../configs/constants/colors";
 import Button from "../../components/Button";
+import { loginApi } from "../../configs/networking/server-api/auth/loginApi";
+import { setItem } from "../../utils/AsyncStorage";
 
-const LoginScreen = ({ onLoginSuccess }) => {
+const LoginScreen = ({ route }) => {
+  const { onLoginSuccess } = route.params;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginFailed, setLoginFailed] = useState(false);
 
-  const handleLogin = () => {
-    const LoginInfo = {
-      username: username,
-      password: password,
-    };
-
-    if (username === "usr" && password === "123") {
-      console.log("Login successful!", JSON.stringify(LoginInfo));
-      // return true;
+  const handleLogin = async () => {
+    const res = await loginApi(username, password);
+    if (res.token) {
+      setItem("token", res.token);
       setLoginFailed(false);
-      onLoginSuccess(); // Gọi callback khi login thành công
+      onLoginSuccess();
     } else {
-      console.log("Login failed.");
       setLoginFailed(true);
-      // return false;
     }
   };
 
