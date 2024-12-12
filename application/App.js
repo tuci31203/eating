@@ -2,12 +2,25 @@ import { NavigationContainer } from "@react-navigation/native";
 import { StyleSheet, Text } from "react-native";
 import * as Font from "expo-font";
 import Tabs from "./src/components/navigation/NavTab";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { StateProvider } from "./src/context/StateContext";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import LoginScreen from "./src/screens/login-screen/LoginScreen";
-import { getItem, removeItem } from "./src/utils/AsyncStorage";
 import AuthNavigator from "./src/components/navigation/AuthNavigator";
+import { AuthProvider, useAuth } from "./src/context/AuthContext";
+
+const MainApp = () => {
+  const { isLoggedIn, checkLoginStatus } = useAuth();
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, []);
+
+  if (!isLoggedIn) {
+    return <AuthNavigator />;
+  }
+
+  return <Tabs />;
+};
 
 export default function App() {
   const [fontsLoaded] = Font.useFonts({
@@ -22,7 +35,6 @@ export default function App() {
     "Inter-Thin": require("./assets/fonts/Inter-Thin.ttf"),
   });
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     if (fontsLoaded) {
       Text.defaultProps = Text.defaultProps || {};
@@ -30,38 +42,22 @@ export default function App() {
     }
   }, [fontsLoaded]);
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const token = await getItem("token");
-      if (token) {
-        setIsLoggedIn(true);
-      }
-    };
-  }, []);
-
   if (!fontsLoaded) {
     return null;
   }
 
-  const handleLogout = async () => {
-    await removeItem("authToken");
-    setIsLoggedIn(false);
-  };
-
   return (
-    <StateProvider>
-      {/* <SafeAreaProvider>
+    <AuthProvider>
+      <StateProvider>
+        {/* <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1, height: '100%' }} edges={['right', 'left', 'top', 'bottom']}> */}
-      <NavigationContainer>
-        {isLoggedIn ? (
-          <Tabs onLogout={handleLogout} />
-        ) : (
-          <AuthNavigator onLoginSuccess={() => setIsLoggedIn(true)} />
-        )}
-      </NavigationContainer>
-      {/* </SafeAreaView>
+        <NavigationContainer>
+          <MainApp />
+        </NavigationContainer>
+        {/* </SafeAreaView>
       </SafeAreaProvider> */}
-    </StateProvider>
+      </StateProvider>
+    </AuthProvider>
   );
 }
 

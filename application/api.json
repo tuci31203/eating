@@ -1,271 +1,266 @@
 {
-    "api/getTodayMeals":{
-        "method": "GET",
-        "res.data":{
-            "breakfast":{
-                "mealId": 1,
-                "ingredients":"Apple, Lettuce, Cucumber, Egg"
-            },
-            "lunch":{
-                "mealId": 3,
-                "ingredients":"Apple, Lettuce, Cucumber, Egg"
-            },
-            "dinner":{
-                "mealId": 4,
-                "ingredients":"Apple, Lettuce, Cucumber, Egg"
-            },
-            "snack":{
-                "mealId": 2,
-                "ingredients":"Apple, Lettuce, Cucumber, Egg"
-            }
-        }
-    },
-
-    "api/getMealbyId":{
-        "method": "GET",
-        "req.params":{
-            "id": 1
-        },
-        "res.data":{
-            "ingredients":[
-                {
-                    "name": "apple",
-                    "amount": 100,
-                    "unit": "g"
-                },
-                {
-                    "name": "sugar",
-                    "amount": 100,
-                    "unit": "g"
-                }
-            ]
-        }
-    },
-
-    "api/getNutrientCount":{
-        "method": "GET",
-        "req.body":{
-            "ingredients":[
-                {
-                    "name": "apple",
-                    "amount": 100,
-                    "unit": "g"
-                },
-                {
-                    "name": "sugar",
-                    "amount": 100,
-                    "unit": "g"
-                }
-            ]
-        },
-        "res.data":
-            [
-                {
-                    "name": "calory",
-                    "amount": 10000,
-                    "unit": "kcal"
-                },
-                {
-                    "name": "water",
-                    "amount": 10000,
-                    "unit": "ml"
-                },
-                {
-                    "name": "carbs",
-                    "amount": 10000,
-                    "unit": "g"
-                },
-                {
-                    "name": "sugar",
-                    "amount": 10000,
-                    "unit": "g"
-                },
-                {
-                    "name": "fiber",
-                    "amount": 10000,
-                    "unit": "g"
-                },
-                {
-                    "name": "protein",
-                    "amount": 10000,
-                    "unit": "g"
-                },
-                {
-                    "name": "fat",
-                    "amount": 10000,
-                    "unit": "g"
-                }
-            ]
-        
-    },
-
-    
-    "api/getRecipes":{
-        "method": "GET",
-        "req.body":{
-            "ingredients":["apple", "sugar", "flour", "egg"]
-        },
-        "res.data":[
-            {
-                "id": 1,
-                "title": "apple pie",
-                "ingredients":[
-                    {
-                        "name": "apple",
-                        "amount": "100g"
-                    },
-                    {
-                        "name": "flour",
-                        "amount": "100g"
-                    }
-                ],
-                "time": "30",
-                "instructions": "Prepare then bake it, make it delicious and that's it"
-            },
-            {
-                "id": 2,
-                "title": "apple juice",
-                "ingredients":[
-                    {
-                        "name": "apple",
-                        "amount": "100g"
-                    },
-                    {
-                        "name": "ice",
-                        "amount": "100g"
-                    }
-                ],
-                "time": "10",
-                "instructions": "Prepare then blend it, make it delicious and that's it"
-            }
-
-        ]
-    },
-
-
-    "api/createMeal":{
-        "method": "POST",
-        "req.body":{
-            "meal": "lunch",
-            "ingredients":[
-                {
-                    "name": "apple",
-                    "amount": 100,
-                    "unit": "g"
-                },
-                {
-                    "name": "sugar",
-                    "amount": 100,
-                    "unit": "g"
-                }
-            ],
-            "nutrients":[
-                {
-                    "name": "calory",
-                    "amount": 10000,
-                    "unit": "kcal"
-                },
-                {
-                    "name": "water",
-                    "amount": 10000,
-                    "unit": "ml"
-                },
-                {
-                    "name": "carbs",
-                    "amount": 10000,
-                    "unit": "g"
-                },
-                {
-                    "name": "sugar",
-                    "amount": 10000,
-                    "unit": "g"
-                },
-                {
-                    "name": "fiber",
-                    "amount": 10000,
-                    "unit": "g"
-                },
-                {
-                    "name": "protein",
-                    "amount": 10000,
-                    "unit": "g"
-                },
-                {
-                    "name": "fat",
-                    "amount": 10000,
-                    "unit": "g"
-                }
-            ]
-        },
-        "res.data":{
-            "EC":0,
-            "DT":"successful"
-        }
-    },
-
-    "api/updateMeal":{
-        "method": "PUT",
-        "req.params":{
-            "id": 1
-        },
-        "req.body":{
-            "ingredients":[
-                {
-                    "name": "apple",
-                    "amount": 100,
-                    "unit": "g"
-                },
-                {
-                    "name": "sugar",
-                    "amount": 100,
-                    "unit": "g"
-                }
-            ],
-            "nutrients":[
-                {
-                    "calory": 10000,
-                    "unit": "kcal"
-                },
-                {
-                    "water": 10000,
-                    "unit": "ml"
-                },
-                {
-                    "carbs": 10000,
-                    "unit": "g"
-                },
-                {
-                    "sugar": 10000,
-                    "unit": "g"
-                },
-                {
-                    "fiber": 10000,
-                    "unit": "g"
-                },
-                {
-                    "protein": 10000,
-                    "unit": "g"
-                },
-                {
-                    "fat": 10000,
-                    "unit": "g"
-                }
-            ]
-        },
-        "res.data":{
-            "EC": 0,
-            "DT":"successful"
-        }
-    },
-
-    "api/deleteMeal":{
-        "method": "DELETE",
-        "req.params":{
-            "id": 1
-        },
-        "res.data":{
-            "EC": 0,
-            "DT":"successful"
-        }
+  "api/getTodayMeals": {
+    "method": "GET",
+    "res.data": {
+      "breakfast": {
+        "mealId": 1,
+        "ingredients": "Apple, Lettuce, Cucumber, Egg"
+      },
+      "lunch": {
+        "mealId": 3,
+        "ingredients": "Apple, Lettuce, Cucumber, Egg"
+      },
+      "dinner": {
+        "mealId": 4,
+        "ingredients": "Apple, Lettuce, Cucumber, Egg"
+      },
+      "snack": {
+        "mealId": 2,
+        "ingredients": "Apple, Lettuce, Cucumber, Egg"
+      }
     }
+  },
+
+  "api/getMealbyId": {
+    "method": "GET",
+    "req.params": {
+      "id": 1
+    },
+    "res.data": {
+      "ingredients": [
+        {
+          "name": "apple",
+          "amount": 100,
+          "unit": "g"
+        },
+        {
+          "name": "sugar",
+          "amount": 100,
+          "unit": "g"
+        }
+      ]
+    }
+  },
+
+  "api/getNutrientCount": {
+    "method": "GET",
+    "req.body": {
+      "ingredients": [
+        {
+          "name": "apple",
+          "amount": 100,
+          "unit": "g"
+        },
+        {
+          "name": "sugar",
+          "amount": 100,
+          "unit": "g"
+        }
+      ]
+    },
+    "res.data": [
+      {
+        "name": "calory",
+        "amount": 10000,
+        "unit": "kcal"
+      },
+      {
+        "name": "water",
+        "amount": 10000,
+        "unit": "ml"
+      },
+      {
+        "name": "carbs",
+        "amount": 10000,
+        "unit": "g"
+      },
+      {
+        "name": "sugar",
+        "amount": 10000,
+        "unit": "g"
+      },
+      {
+        "name": "fiber",
+        "amount": 10000,
+        "unit": "g"
+      },
+      {
+        "name": "protein",
+        "amount": 10000,
+        "unit": "g"
+      },
+      {
+        "name": "fat",
+        "amount": 10000,
+        "unit": "g"
+      }
+    ]
+  },
+
+  "api/getRecipes": {
+    "method": "GET",
+    "req.body": {
+      "ingredients": ["apple", "sugar", "flour", "egg"]
+    },
+    "res.data": [
+      {
+        "id": 1,
+        "title": "apple pie",
+        "ingredients": [
+          {
+            "name": "apple",
+            "amount": "100g"
+          },
+          {
+            "name": "flour",
+            "amount": "100g"
+          }
+        ],
+        "time": "30",
+        "instructions": "Prepare then bake it, make it delicious and that's it"
+      },
+      {
+        "id": 2,
+        "title": "apple juice",
+        "ingredients": [
+          {
+            "name": "apple",
+            "amount": "100g"
+          },
+          {
+            "name": "ice",
+            "amount": "100g"
+          }
+        ],
+        "time": "10",
+        "instructions": "Prepare then blend it, make it delicious and that's it"
+      }
+    ]
+  },
+
+  "api/createMeal": {
+    "method": "POST",
+    "req.body": {
+      "meal": "lunch",
+      "ingredients": [
+        {
+          "name": "apple",
+          "amount": 100,
+          "unit": "g"
+        },
+        {
+          "name": "sugar",
+          "amount": 100,
+          "unit": "g"
+        }
+      ],
+      "nutrients": [
+        {
+          "name": "calory",
+          "amount": 10000,
+          "unit": "kcal"
+        },
+        {
+          "name": "water",
+          "amount": 10000,
+          "unit": "ml"
+        },
+        {
+          "name": "carbs",
+          "amount": 10000,
+          "unit": "g"
+        },
+        {
+          "name": "sugar",
+          "amount": 10000,
+          "unit": "g"
+        },
+        {
+          "name": "fiber",
+          "amount": 10000,
+          "unit": "g"
+        },
+        {
+          "name": "protein",
+          "amount": 10000,
+          "unit": "g"
+        },
+        {
+          "name": "fat",
+          "amount": 10000,
+          "unit": "g"
+        }
+      ]
+    },
+    "res.data": {
+      "EC": 0,
+      "DT": "successful"
+    }
+  },
+
+  "api/updateMeal": {
+    "method": "PUT",
+    "req.params": {
+      "id": 1
+    },
+    "req.body": {
+      "ingredients": [
+        {
+          "name": "apple",
+          "amount": 100,
+          "unit": "g"
+        },
+        {
+          "name": "sugar",
+          "amount": 100,
+          "unit": "g"
+        }
+      ],
+      "nutrients": [
+        {
+          "calory": 10000,
+          "unit": "kcal"
+        },
+        {
+          "water": 10000,
+          "unit": "ml"
+        },
+        {
+          "carbs": 10000,
+          "unit": "g"
+        },
+        {
+          "sugar": 10000,
+          "unit": "g"
+        },
+        {
+          "fiber": 10000,
+          "unit": "g"
+        },
+        {
+          "protein": 10000,
+          "unit": "g"
+        },
+        {
+          "fat": 10000,
+          "unit": "g"
+        }
+      ]
+    },
+    "res.data": {
+      "EC": 0,
+      "DT": "successful"
+    }
+  },
+
+  "api/deleteMeal": {
+    "method": "DELETE",
+    "req.params": {
+      "id": 1
+    },
+    "res.data": {
+      "EC": 0,
+      "DT": "successful"
+    }
+  }
 }

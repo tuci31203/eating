@@ -5,12 +5,11 @@ import GreetText from "../../components/GreetText";
 import UserInfoRow from "./UserInfoRow";
 import SettingOption from "./SettingOption";
 
-const SettingScreen = ({ route, navigation }) => {
-  const { onLogout } = route.params;
+const SettingScreen = () => {
   return (
     <ScreenView>
       <GreetText>Settings</GreetText>
-      <UserInfoRow onLogout={onLogout} />
+      <UserInfoRow />
       <SettingOption />
     </ScreenView>
   );

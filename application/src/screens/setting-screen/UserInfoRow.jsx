@@ -2,21 +2,33 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { AVA, ICONS } from "../../configs/constants/graphic";
 import { COLORS } from "../../configs/constants/colors";
-import { removeItem } from "../../utils/AsyncStorage";
-import { useNavigation } from "@react-navigation/native";
-import App from "../../../App";
+import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
+import { getItem } from "../../utils/AsyncStorage";
 
-const UserInfoRow = ({ onLogout }) => {
+const UserInfoRow = () => {
   const navigation = useNavigation();
-  const [user, setUser] = useState({
-    name: "Chiến",
-    email: "diachi@gmail.com",
+  const { handleLogout } = useAuth();
+  // const [user, setUser] = useState({
+  //   name: "Chiến",
+  //   email: "diachi@gmail.com",
+  //   avatar: AVA,
+  // });
+  const getName = async () => await getItem("username");
+  const user = {
+    name: getName(),
+    email: "Hello! We are eating!",
     avatar: AVA,
-  });
-  const handleLogout = async () => {
-    await removeItem("token");
+  };
+  const onLogout = async () => {
+    await handleLogout();
     console.log("logout");
-    onLogout();
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "home" }],
+      })
+    );
   };
   return (
     <View style={styles.container}>
@@ -27,7 +39,7 @@ const UserInfoRow = ({ onLogout }) => {
           <Text style={[styles.text, styles.email]}>{user.email}</Text>
         </View>
       </View>
-      <TouchableOpacity onPress={handleLogout}>
+      <TouchableOpacity onPress={onLogout}>
         <Image
           source={ICONS.logout}
           style={styles.icon}

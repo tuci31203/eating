@@ -13,7 +13,7 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
-const Tabs = ({ onLogout }) => {
+const Tabs = () => {
   const navigation = useNavigation();
   const resetToHome = () => {
     navigation.dispatch(
@@ -153,7 +153,6 @@ const Tabs = ({ onLogout }) => {
       <Tab.Screen
         name="setting"
         component={SettingScreen}
-        initialParams={{ onLogout }}
         options={{
           tabBarLabelStyle: { display: "none" },
           tabBarIcon: ({ focused }) => (

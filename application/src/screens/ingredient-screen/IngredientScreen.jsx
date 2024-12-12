@@ -48,6 +48,9 @@ const IngredientScreen = ({ navigation, route }) => {
   };
 
   const selectIngredients = () => {
+    setIngredients((prev) =>
+      prev.map((each) => ({ ...each, name: each.name.trim() }))
+    );
     const selected = ingredients
       .filter((each) => each.chosen === true)
       .map(({ chosen, ...rest }) => rest);
