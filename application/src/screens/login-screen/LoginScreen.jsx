@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import ScreenView from "../../components/ScreenView";
 import { useState } from "react";
@@ -8,6 +14,8 @@ import { loginApi } from "../../configs/networking/server-api/auth/loginApi";
 import { setItem } from "../../utils/AsyncStorage";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import * as Burnt from "burnt";
+import { Ionicons } from "@expo/vector-icons";
 
 const LoginScreen = () => {
   const { setIsLoggedIn } = useAuth();
@@ -15,16 +23,74 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [loginFailed, setLoginFailed] = useState(false);
   const navigation = useNavigation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validateInputs = () => {
+    const newErrors = {};
+
+    if (!username.trim()) {
+      newErrors.username = "Username is required";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleLogin = async () => {
-    const res = await loginApi(username, password);
-    if (res.token) {
-      await setItem("token", res.token);
-      await setItem("username", username);
-      setLoginFailed(false);
-      setIsLoggedIn(true);
-    } else {
-      setLoginFailed(true);
+    if (!validateInputs()) {
+      Burnt.toast({
+        title: "Check your inputs",
+        message: "Please check your inputs",
+        preset: "error",
+        duration: 2,
+      });
+      return;
+    }
+
+    try {
+      Burnt.toast({
+        title: "Logging in...",
+        preset: "loading",
+        duration: 1,
+      });
+
+      const res = await loginApi(username.trim(), password);
+
+      if (res.token) {
+        await setItem("token", res.token);
+        await setItem("username", username);
+        setLoginFailed(false);
+        setIsLoggedIn(true);
+
+        Burnt.toast({
+          title: "Success!",
+          message: "Welcome back " + username,
+          preset: "done",
+          duration: 2,
+        });
+      } else {
+        setLoginFailed(true);
+        Burnt.toast({
+          title: "Login Failed",
+          message: "Please check your credentials",
+          preset: "error",
+          duration: 2,
+        });
+      }
+    } catch (error) {
+      Burnt.toast({
+        title: "Error",
+        message: "Something went wrong. Please try again.",
+        preset: "error",
+        duration: 2,
+      });
     }
   };
 
@@ -32,38 +98,49 @@ const LoginScreen = () => {
     <ScreenView>
       <View style={styles.outerContainer}>
         <View style={styles.container}>
-          {/* Welcome Text */}
           <Text style={styles.welcomeText}>Welcome to eating!</Text>
 
-          {/* Username Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Username</Text>
-            {/* <View style={styles.input}></View> */}
             <TextInput
+              selectionColor={COLORS.blink}
               value={username}
               style={styles.input}
-              // onChangeText={onChangeNumber}
-              onChangeText={(text) => setUsername(text)}
-              // value={number}
-              placeholder=""
+              onChangeText={(text) => {
+                setUsername(text);
+                setErrors((prev) => ({ ...prev, username: null }));
+              }}
               keyboardType="text"
+              autoCapitalize="none"
             />
           </View>
 
-          {/* Password Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
-            {/* <View style={styles.input}>nnnn</View> */}
-            <TextInput
-              value={password}
-              style={styles.input}
-              // onChangeText={onChangeNumber}
-              // value={number}
-              onChangeText={(text) => setPassword(text)}
-              placeholder=""
-              keyboardType="text"
-              secureTextEntry={true}
-            />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                selectionColor={COLORS.blink}
+                value={password}
+                style={styles.input}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setErrors((prev) => ({ ...prev, password: null }));
+                }}
+                keyboardType="text"
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off" : "eye"}
+                  size={24}
+                  color={COLORS.text}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {loginFailed && (
@@ -133,6 +210,11 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 20,
   },
+  passwordContainer: {
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+  },
   label: {
     fontSize: 14,
     fontFamily: "Inter-SemiBold",
@@ -145,6 +227,13 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     paddingLeft: 10,
     marginTop: 5,
+    paddingRight: 50,
+    width: "100%",
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 12,
+    top: 15,
   },
   loginButton: {
     backgroundColor: COLORS.buttonBackground, // Use button background color from COLORS

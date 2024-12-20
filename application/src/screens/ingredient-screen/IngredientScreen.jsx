@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import IngredientList from "../../components/ingredient/IngredientList";
 import CameraButton from "../../components/camera-button/CameraButton";
@@ -6,6 +6,7 @@ import { StateContext } from "../../context/StateContext";
 import { useRoute } from "@react-navigation/native";
 import { Button, GreetText, ScreenView, Xmark } from "../../components";
 import { getMealByIdApi } from "../../configs/networking/server-api/meal/getMealById";
+import { COLORS } from "../../configs/constants/colors";
 
 const IngredientScreen = ({ navigation, route }) => {
   // const [ingredients, setIngredients] = useState(defaultIngredients)
@@ -20,6 +21,7 @@ const IngredientScreen = ({ navigation, route }) => {
     return route.params?.id ? route.params.id : null;
   });
   const [initMeal, setInitMeal] = useState({});
+  const [mealType, setMealType] = useState("");
 
   useEffect(() => {
     console.log("INGREDIENT SCREEN changes >>> ");
@@ -27,7 +29,9 @@ const IngredientScreen = ({ navigation, route }) => {
     console.log("MEAL ID >>> ", mealId);
     if (mealId) {
       getMealById();
+      return;
     }
+    setMealType("");
   }, []);
 
   const getMealById = async () => {
@@ -42,6 +46,7 @@ const IngredientScreen = ({ navigation, route }) => {
         unit: "g",
         chosen: true,
       }));
+      setMealType(res.type);
       console.log(initIngre);
       setIngredients(initIngre);
     }
@@ -74,25 +79,28 @@ const IngredientScreen = ({ navigation, route }) => {
         <GreetText>Ingredients 🍗</GreetText>
         <Xmark />
         <View style={styles.ingreContainer}>
+          {mealId && <Text style={styles.meal}>{mealType}</Text>}
           <IngredientList
             ingredients={ingredients}
             setIngredients={setIngredients}
           />
         </View>
       </ScreenView>
+      {!mealId && (
+        <Button
+          title={"Recipes"}
+          variant="default"
+          style={[styles.botBut, { left: 40 }]}
+          onPress={searchRecipes}
+        />
+      )}
       <Button
-        title={"Recipes"}
-        variant="default"
-        style={[styles.botBut, { left: 40 }]}
-        onPress={searchRecipes}
-      />
-      <Button
-        title={"Add"}
+        title={mealId ? "Next" : "Add"}
         variant="action"
         style={[styles.botBut, { right: 52 }]}
         onPress={selectIngredients}
       />
-      <CameraButton />
+      {!mealId && <CameraButton />}
     </>
   );
 };
@@ -109,5 +117,11 @@ const styles = StyleSheet.create({
     marginTop: 27,
     flex: 1,
     marginBottom: 230,
+  },
+  meal: {
+    textAlign: "center",
+    fontFamily: "Inter-Black",
+    fontSize: 18,
+    color: COLORS.undertone,
   },
 });
