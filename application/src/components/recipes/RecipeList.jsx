@@ -5,10 +5,13 @@ import { FlatList } from "react-native-gesture-handler";
 import { getRecipesApi } from "../../configs/networking/server-api/recipe/getRecipes";
 import { StateContext } from "../../context/StateContext";
 import { replaceLinhWithNewline } from "../../utils/newLine";
+import * as Burnt from "burnt";
+import { COLORS } from "../../configs/constants/colors";
 
 const { height } = Dimensions.get("screen");
 const RecipeList = ({ setTmp }) => {
   const { ingredients } = useContext(StateContext);
+  const [hasRecipe, setHasRecipe] = React.useState(true);
   useEffect(() => {
     getRecipes();
   }, [ingredients]);
@@ -21,7 +24,12 @@ const RecipeList = ({ setTmp }) => {
     console.log(ingre);
     const res = await getRecipesApi(ingre);
     if (res) {
-      //   console.log(res);
+      if (res.length === 0) {
+        setHasRecipe(false);
+      } else {
+        setHasRecipe(true);
+      }
+      console.log(res);
       const recps = res.map((item) => ({
         id: item.recipe_id,
         title: item.title,
@@ -37,6 +45,18 @@ const RecipeList = ({ setTmp }) => {
 
   return (
     <View style={styles.container}>
+      {!hasRecipe && (
+        <Text
+          style={{
+            color: COLORS.undertone,
+            fontSize: 20,
+            textAlign: "center",
+            fontFamily: "Inter-Bold",
+          }}
+        >
+          No recipe found
+        </Text>
+      )}
       <FlatList
         style={styles.list}
         data={recipes}

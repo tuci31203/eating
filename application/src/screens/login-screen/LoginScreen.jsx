@@ -188,12 +188,10 @@ const styles = StyleSheet.create({
   },
   container: {
     width: "90%", // Hoặc dùng giá trị cụ thể như 300
-    backgroundColor: "white", // Màu nền của khung login
+    backgroundColor: COLORS.bg, // Màu nền của khung login
     padding: 25,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    borderRadius: 15,
-    shadowColor: "#000", // Tạo hiệu ứng đổ bóng
+    borderRadius: 25,
+    shadowColor: COLORS.text, // Tạo hiệu ứng đổ bóng
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
