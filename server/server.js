@@ -35,7 +35,7 @@ const authenticateToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({ error: 'Invalid token' });
     }
-    req.headers['user_id'] = decoded.userId;
+    req.user = { userId: decoded.userId };
     next();
   });
 };
@@ -283,6 +283,142 @@ app.post('/api/getNutrientCount', async (req, res) => {
 
 
 /**
+ * @api {get} /api/getMealsByTimeRange Get meals within timestamp range
+ * @apiName GetMealsByTimeRange
+ * @apiGroup Meal
+ * 
+ * @apiHeader {String} Authorization JWT token.
+ * 
+ * @apiParam {String} start_time Start timestamp in ISO 8601 format with timezone (e.g. '2024-12-26T14:30:00Z')
+ * @apiParam {String} end_time End timestamp in ISO 8601 format with timezone
+ * 
+ * @apiSuccess {Object[]} meals List of meals in timestamp range.
+ * @apiSuccess {Number} meals.meal_id Meal ID.
+ * @apiSuccess {String} meals.type Meal type.
+ * @apiSuccess {String} meals.datetime Meal datetime.
+ * @apiSuccess {Object[]} meals.ingredients List of ingredients.
+ * @apiSuccess {String} meals.ingredients.name Ingredient name.
+ * @apiSuccess {Number} meals.ingredients.amount Ingredient amount.
+ * @apiSuccess {String} meals.ingredients.unit_name Ingredient unit name.
+ * @apiSuccess {Object[]} meals.nutrients List of nutrients.
+ * @apiSuccess {String} meals.nutrients.name Nutrient name.
+ * @apiSuccess {Number} meals.nutrients.amount Total amount of the nutrient.
+ * @apiSuccess {String} meals.nutrients.unit_name Nutrient unit name.
+ * 
+ * @apiError (400) BadRequest Missing/invalid parameters.
+ * @apiError (401) Unauthorized Access denied.
+ * @apiError (403) Forbidden Invalid token.
+ * @apiError (500) ServerError An error occurred on the server.
+ */
+app.get('/api/getMealsByTimeRange', authenticateToken, async (req, res) => {
+  const userId = req.user.userId;
+  const { start_time, end_time } = req.query;
+
+  // Check timestamps
+  if (!start_time || !end_time) {
+    return res.status(400).json({ error: 'Missing start_time or end_time' });
+  }
+  const startTime = new Date(start_time);
+  const endTime = new Date(end_time);
+  if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+    return res.status(400).json({ error: 'Invalid timestamp format' });
+  }
+
+  let client;
+  try {
+    client = await db.connect();
+    await client.query('START TRANSACTION ISOLATION LEVEL SERIALIZABLE READ ONLY DEFERRABLE');
+
+    // Check if user exists
+    const userResult = await client.query(`
+      SELECT user_id
+      FROM users
+      WHERE user_id = $1
+    `, [userId]);
+
+    if (userResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Invalid user_id' });
+    }
+
+    // Query meals within timestamp range
+    const result = await client.query(`
+      WITH
+        meal_details AS (
+          SELECT
+            m.meal_id,
+            m.type,
+          m.datetime,
+          CASE
+            WHEN COUNT(i.ingredient_id) = 0 THEN '[]'::JSONB
+            ELSE JSONB_AGG(JSONB_BUILD_OBJECT(
+              'name', i.name,
+              'amount', mi.amount,
+              'unit_name', i.unit_name
+            ))
+          END AS ingredients
+          FROM meal m
+            LEFT JOIN meal_includes_ingredient mi ON m.meal_id = mi.meal_id
+            LEFT JOIN ingredient i ON mi.ingredient_id = i.ingredient_id
+          WHERE m.datetime >= $1
+            AND m.datetime <= $2
+            AND m.user_id = $3
+          GROUP BY m.meal_id, m.type, m.datetime
+        ),
+        nutrient_totals AS (
+          SELECT
+            m.meal_id,
+            n.name,
+          SUM(icn.amount * mi.amount) AS amount,
+            n.unit_name
+          FROM meal m
+            JOIN meal_includes_ingredient mi ON m.meal_id = mi.meal_id
+            JOIN ingredient i ON mi.ingredient_id = i.ingredient_id
+            JOIN ingredient_contains_nutrient icn ON i.ingredient_id = icn.ingredient_id
+            JOIN nutrient n ON icn.nutrient_id = n.nutrient_id
+          WHERE m.datetime >= $1
+            AND m.datetime <= $2
+            AND m.user_id = $3
+          GROUP BY m.meal_id, n.name, n.unit_name
+        )
+      SELECT
+        md.meal_id,
+        md.type,
+        md.datetime,
+        md.ingredients,
+        CASE
+          WHEN md.ingredients = '[]'::JSONB THEN '[]'::JSONB
+          ELSE JSONB_AGG(JSONB_BUILD_OBJECT(
+            'name', nt.name,
+            'amount', nt.amount,
+            'unit_name', nt.unit_name
+          ))
+        END AS nutrients
+      FROM meal_details md
+        LEFT JOIN nutrient_totals nt ON md.meal_id = nt.meal_id
+      GROUP BY md.meal_id, md.type, md.datetime, md.ingredients
+      ORDER BY md.datetime;
+    `, [start_time, end_time, userId]);
+    
+    await client.query('COMMIT');
+    return res.status(200).json(result.rows);
+  }
+  catch (err) {
+    if (client) {
+      await client.query('ROLLBACK');
+    }
+    console.error('Error in /api/getMealsByDateRange:', err);
+    return res.status(500).json({ error: 'Server Error' });
+  }
+  finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
+
+/**
  * @api {get} /api/getTodayMeals Get today's meals
  * @apiName GetTodayMeals
  * @apiGroup Meal
@@ -304,7 +440,7 @@ app.post('/api/getNutrientCount', async (req, res) => {
  * @apiError (500) ServerError An error occurred on the server.
  */
 app.get('/api/getTodayMeals', authenticateToken, async (req, res) => {
-  const userId = req.headers['user_id'];
+  const userId = req.user.userId;
 
   let client;
 
@@ -379,7 +515,7 @@ app.get('/api/getTodayMeals', authenticateToken, async (req, res) => {
  */
 app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
   const mealId = req.query.meal_id;
-  const userId = req.headers['user_id'];
+  const userId = req.user.userId;
 
   if (!mealId) {
     return res.status(400).json({ error: 'Missing meal_id parameter' });
@@ -462,7 +598,7 @@ app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
  */
 app.post('/api/createMeal', authenticateToken, async (req, res) => {
   const { type, datetime, ingredients, aggregate = false } = req.body;
-  const user_id = req.headers['user_id'];
+  const user_id = req.user.userId;
 
   // Check if type or datetime is not provided
   if (!type || !datetime) {
@@ -584,7 +720,7 @@ app.post('/api/createMeal', authenticateToken, async (req, res) => {
  */
 app.put('/api/updateMeal', authenticateToken, async (req, res) => {
   const { meal_id, type, datetime, ingredients, aggregate = false } = req.body;
-  const user_id = req.headers['user_id'];
+  const user_id = req.user.userId;
 
   // Check if meal_id is provided
   if (!meal_id) {
@@ -746,7 +882,7 @@ app.put('/api/updateMeal', authenticateToken, async (req, res) => {
  */
 app.delete('/api/deleteMeal', authenticateToken, async (req, res) => {
   const { meal_id } = req.body;
-  const user_id = req.headers['user_id'];
+  const user_id = req.user.userId;
 
   if (!meal_id) {
     return res.status(400).json({ error: 'Meal ID is required' });
