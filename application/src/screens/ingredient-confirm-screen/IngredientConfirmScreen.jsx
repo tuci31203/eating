@@ -143,7 +143,7 @@ const IngredientConfirmScreen = () => {
           protein={nutrients.protein}
           fat={nutrients.fat}
         />
-        <MealOption meal={meal} setMeal={setMeal} />
+        <MealOption meal={meal} setMeal={mealId ? () => {} : setMeal} />
       </ScreenView>
 
       <Button

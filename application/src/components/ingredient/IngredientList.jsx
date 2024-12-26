@@ -54,13 +54,13 @@ const IngredientList = ({ ingredients, setIngredients }) => {
     );
   };
   const handleChangeUnit = (id) => {
-    setIngredients((prev) =>
-      prev.map((each) =>
-        each.id === id
-          ? { ...each, unit: each.unit === "g" ? "ml" : "g" }
-          : each
-      )
-    );
+    // setIngredients((prev) =>
+    //   prev.map((each) =>
+    //     each.id === id
+    //       ? { ...each, unit: each.unit === "g" ? "ml" : "g" }
+    //       : each
+    //   )
+    // );
   };
 
   const handleDelete = (id) => {

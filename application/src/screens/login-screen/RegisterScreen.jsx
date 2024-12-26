@@ -100,6 +100,7 @@ const RegisterScreen = () => {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Username</Text>
             <TextInput
+              selectionColor={COLORS.blink}
               value={username}
               style={styles.input}
               onChangeText={(text) => setUsername(text)}
