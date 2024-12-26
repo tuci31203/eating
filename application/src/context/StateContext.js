@@ -20,6 +20,7 @@ export const StateProvider = ({ children }) => {
   const [week, setWeek] = useState("");
   const [allIngredients, setAllIngredients] = useState([]);
   const [track, setTrack] = useState(progress);
+  const [change, setChange] = useState(false);
 
   return (
     <StateContext.Provider
@@ -37,6 +38,8 @@ export const StateProvider = ({ children }) => {
         setAllIngredients,
         track,
         setTrack,
+        change,
+        setChange,
       }}
     >
       {children}

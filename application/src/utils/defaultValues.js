@@ -1,11 +1,11 @@
 export const goal = {
   calory: 1500,
   carbs: 150,
-  water: 3000,
+  water: 2000,
   fat: 50,
   sugar: 30,
-  protein: 100,
-  fiber: 20,
+  protein: 200,
+  fiber: 200,
 };
 
 export const progress = [

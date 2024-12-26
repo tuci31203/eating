@@ -9,7 +9,7 @@ import { goal } from "../../utils/defaultValues";
 import { StateContext } from "../../context/StateContext";
 
 const GoalScreen = () => {
-  const { track } = useContext(StateContext);
+  const { track, setChange } = useContext(StateContext);
   const [goals, setGoals] = useState(() => goal);
   useEffect(() => {
     const fetchGoal = async () => {
@@ -34,6 +34,7 @@ const GoalScreen = () => {
       }
     };
     saveGoal();
+    setChange((prev) => !prev);
   }, [goals]);
   const progress = track;
 
