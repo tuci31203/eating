@@ -1,4 +1,6 @@
 import React, { createContext, useState } from "react";
+import { noInfo } from "../utils/transformDayInfo";
+import { progress } from "../utils/defaultValues";
 
 export const StateContext = createContext();
 
@@ -14,9 +16,10 @@ export const StateProvider = ({ children }) => {
   ];
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [ingredients, setIngredients] = useState(defaultIngredients);
-  const [dayInfo, setDayInfo] = useState({});
+  const [dayInfo, setDayInfo] = useState(noInfo);
   const [week, setWeek] = useState("");
   const [allIngredients, setAllIngredients] = useState([]);
+  const [track, setTrack] = useState(progress);
 
   return (
     <StateContext.Provider
@@ -32,6 +35,8 @@ export const StateProvider = ({ children }) => {
         setWeek,
         allIngredients,
         setAllIngredients,
+        track,
+        setTrack,
       }}
     >
       {children}
