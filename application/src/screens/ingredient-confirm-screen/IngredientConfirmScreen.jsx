@@ -47,9 +47,12 @@ const IngredientConfirmScreen = () => {
     // const selected = ingredients.filter(each => each.chosen === true).map(({ id, ...rest }) => rest)
     // setSelectedIngredients(selected)
     console.log("Ấn rồi");
+    const currentDate = new Date();
+    const offset = 7 * 60 * 60 * 1000; // 7 hours in milliseconds
+    const adjustedDate = new Date(currentDate.getTime() + offset);
     const body = {
       type: mealId ? mealType : meal,
-      datetime: new Date().toISOString(),
+      datetime: adjustedDate.toISOString(),
       ingredients: selectedIngredients.map((each) => {
         return { name: each.name.toLowerCase(), amount: each.amount };
       }),
@@ -61,6 +64,7 @@ const IngredientConfirmScreen = () => {
       console.log("BODY >>> ", body);
       res = await updateMealApi(body);
     } else {
+      console.log("BODY >>> ", body);
       res = await createMealApi(body);
     }
     if (res && (res.meal_id || res.message)) {

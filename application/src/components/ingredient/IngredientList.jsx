@@ -182,13 +182,13 @@ export default IngredientList;
 
 const styles = StyleSheet.create({
   suggestionsList: {
+    width: "50%",
     maxHeight: 200,
     backgroundColor: COLORS.bg,
     borderRadius: 7,
     borderWidth: 2,
     borderColor: COLORS.text,
     position: "absolute",
-    left: 0,
     right: 0,
     zIndex: 1001,
     elevation: 5,
