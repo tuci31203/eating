@@ -110,13 +110,13 @@ export default IngredientScreen;
 const styles = StyleSheet.create({
   botBut: {
     position: "absolute",
-    bottom: 53,
+    bottom: 73,
   },
   ingreContainer: {
     marginHorizontal: 30,
     marginTop: 27,
     flex: 1,
-    marginBottom: 256,
+    marginBottom: 336,
   },
   meal: {
     textAlign: "center",

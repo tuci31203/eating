@@ -123,7 +123,7 @@ const IngredientConfirmScreen = () => {
         <View
           style={{
             marginHorizontal: 30,
-            marginTop: 27,
+            marginTop: 17,
             flex: 1,
             // backgroundColor: 'pink',
             marginBottom: 400,
@@ -169,6 +169,6 @@ export default IngredientConfirmScreen;
 const styles = StyleSheet.create({
   botBut: {
     position: "absolute",
-    bottom: 53,
+    bottom: 73,
   },
 });

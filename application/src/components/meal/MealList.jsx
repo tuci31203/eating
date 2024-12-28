@@ -92,6 +92,7 @@ export default MealList;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 100,
+    marginBottom: 130,
+    // marginBottom: 100,
   },
 });
