@@ -29,7 +29,7 @@ const RecordScreen = () => {
   const res = dayInfo;
   return (
     <ScreenView>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <GreetText>Your intake record</GreetText>
         <MyCalendar />
         <NutrientGroup nutrients={res.nutrients} />

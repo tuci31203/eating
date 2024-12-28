@@ -21,13 +21,11 @@ const IngredientList = ({ ingredients, setIngredients }) => {
 
   useEffect(() => {
     if (ingredients.length === 1 && ingredients[0].name === "") {
-      // console.log("None >>> ")
       return;
     }
     if (route.params?.from === "IngredientConfirmScreen") {
       return;
     }
-    // console.log("Update length", ingredients.length)
     const lastItem = ingredients[ingredients.length - 1];
     if (lastItem && lastItem.name.trim() !== "") {
       setIngredients((prev) => [...prev, createEmptyIngredient()]);
@@ -46,7 +44,6 @@ const IngredientList = ({ ingredients, setIngredients }) => {
     setIngredients((prev) =>
       prev.map((each) => (each.id === id ? { ...each, name: newIn } : each))
     );
-    // console.log(newIn)
   };
   const handleChangeAmount = (id, newIn) => {
     setIngredients((prev) =>
@@ -81,14 +78,8 @@ const IngredientList = ({ ingredients, setIngredients }) => {
       data={ingredients}
       keyExtractor={(item) => item.id.toString()}
       nestedScrollEnabled={true}
-      // scrollEnabled
-
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
-      // getItemLayout={(data, index) => {
-      //     return { index, length: 58, offset: 58 * index }
-      // }}
-      // style={{ flex: 1 }}
       renderItem={({ item }) => (
         <IngredientItem
           id={item.id}

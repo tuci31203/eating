@@ -45,7 +45,7 @@ const GoalScreen = () => {
         <InfoDay />
         <ModalButton goals={goals} setGoals={setGoals} />
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <GoalList progress={progress} goals={goals} />
       </ScrollView>
     </ScreenView>

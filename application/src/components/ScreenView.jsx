@@ -1,20 +1,26 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { COLORS } from '../configs/constants/colors'
+import { Dimensions, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { COLORS } from "../configs/constants/colors";
 
-const { width, height } = Dimensions.get('screen')
+const { width, height } = Dimensions.get("screen");
 const ScreenView = ({ children, style }) => {
-    return (
-        <View style={[{
-            backgroundColor: COLORS.bg,
-            height: height,
-            width: width,
-        }, style]}>
-            {children}
-        </View>
-    )
-}
+  return (
+    <View
+      style={[
+        {
+          backgroundColor: COLORS.bg,
+          // flex: 1,
+          height: height,
+          width: width,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
+};
 
-export default ScreenView
+export default ScreenView;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

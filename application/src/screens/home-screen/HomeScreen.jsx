@@ -40,7 +40,7 @@ const HomeScreen = () => {
   };
   return (
     <ScreenView>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: 38 }}>
           <GreetText>What do you eat today?</GreetText>
           <Carousel />
