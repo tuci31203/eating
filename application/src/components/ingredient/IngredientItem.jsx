@@ -107,6 +107,7 @@ const IngredientItem = ({
             onChangeText={onChangeName}
             onKeyPress={handleKeyPress}
             onFocus={() => setFc(true)}
+            onSubmitEditing={() => setShowSuggestions(false)}
             placeholder="Type something!"
             placeholderTextColor={"#9A7C71"}
             scrollEnabled={false}
@@ -172,23 +173,17 @@ const IngredientItem = ({
           </View>
         )}
         {showSuggestions && suggestions.length > 0 && (
-          <View style={styles.suggestionsContainer}>
-            <ScrollView
-              //   contentContainerStyle={{ flexGrow: 1 }}
-
-              style={styles.suggestionsList}
-            >
-              {suggestions.map((item) => (
-                <TouchableOpacity
-                  key={item.ingredient_id}
-                  style={styles.suggestionItem}
-                  onPress={() => handleSelect(item)}
-                >
-                  <Text style={styles.suggestionText}>{item.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
+          <ScrollView style={styles.suggestionsList}>
+            {suggestions.map((item) => (
+              <TouchableOpacity
+                key={item.ingredient_id}
+                style={styles.suggestionItem}
+                onPress={() => handleSelect(item)}
+              >
+                <Text style={styles.suggestionText}>{item.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         )}
       </View>
     </>
@@ -215,21 +210,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignContent: "center",
   },
-  suggestionsContainer: {
-    position: "absolute",
-    top: 60,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    // maxHeight: 200,
-  },
   suggestionsList: {
-    // maxHeight: 200,
-    overflow: "scroll",
     backgroundColor: COLORS.bg,
     borderRadius: 7,
     borderWidth: 2,
     borderColor: COLORS.text,
+    position: "absolute",
+    top: 60,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
   },
   suggestionItem: {
     padding: 10,
