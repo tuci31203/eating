@@ -49,7 +49,7 @@ const IngredientConfirmScreen = () => {
     console.log("Ấn rồi");
     const body = {
       type: mealId ? mealType : meal,
-      datetime: new Date().toISOString().split("T")[0].replace(/-/g, "/"),
+      datetime: new Date().toISOString(),
       ingredients: selectedIngredients.map((each) => {
         return { name: each.name.toLowerCase(), amount: each.amount };
       }),
