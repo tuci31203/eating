@@ -75,6 +75,7 @@ const IngredientList = ({ ingredients, setIngredients }) => {
 
   return (
     <FlatList
+      style={{ position: "relative" }}
       data={ingredients}
       keyExtractor={(item) => item.id.toString()}
       nestedScrollEnabled={true}

@@ -61,6 +61,7 @@ const IngredientItem = ({
         style={[
           styles.ngang,
           {
+            zIndex: 1000 - id,
             paddingLeft: 10,
             height: chosen === true && name.trim() ? 58 : 44,
             position: "relative",
