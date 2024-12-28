@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AVA, ICONS } from "../../configs/constants/graphic";
 import { COLORS } from "../../configs/constants/colors";
 import { CommonActions, useNavigation } from "@react-navigation/native";
@@ -9,17 +9,20 @@ import { getItem } from "../../utils/AsyncStorage";
 const UserInfoRow = () => {
   const navigation = useNavigation();
   const { handleLogout } = useAuth();
-  // const [user, setUser] = useState({
-  //   name: "Chiến",
-  //   email: "diachi@gmail.com",
-  //   avatar: AVA,
-  // });
   const getName = async () => await getItem("username");
-  const user = {
-    name: getName(),
+  const [user, setUser] = useState({
+    name: "",
     email: "Hello! We are eating!",
     avatar: AVA,
-  };
+  });
+
+  useEffect(() => {
+    const loadName = async () => {
+      const name = await getName();
+      setUser((prev) => ({ ...prev, name }));
+    };
+    loadName();
+  }, []);
   const onLogout = async () => {
     await handleLogout();
     console.log("logout");
