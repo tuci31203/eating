@@ -62,6 +62,7 @@ const IngredientItem = ({
           styles.ngang,
           {
             zIndex: 1000 - id,
+            elevation: Platform.OS === "android" ? 1000 - id : 0,
             paddingLeft: 10,
             height: chosen === true && name.trim() ? 58 : 44,
             position: "relative",
