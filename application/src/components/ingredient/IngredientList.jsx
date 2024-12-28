@@ -1,11 +1,33 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
 import IngredientItem from "./IngredientItem";
 import { useRoute } from "@react-navigation/native";
-
+import { StateContext } from "../../context/StateContext";
+import { COLORS } from "../../configs/constants/colors";
 const IngredientList = ({ ingredients, setIngredients }) => {
   const route = useRoute();
-
+  const { allIngredients } = useContext(StateContext);
+  const [activeId, setActiveId] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [place, setPlace] = useState(136);
+  const flat = React.useRef(null);
+  useEffect(() => {
+    if (flat.current && ingredients.length > 0) {
+      setTimeout(() => {
+        flat.current.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [ingredients.length]);
   const generateId = () => {
     const maxId = Math.max(...ingredients.map((item) => item.id), 0);
     return maxId + 1;
@@ -41,6 +63,16 @@ const IngredientList = ({ ingredients, setIngredients }) => {
   };
 
   const handleChangeName = (id, newIn) => {
+    setActiveId(id);
+    if (newIn.trim()) {
+      const filteredSuggestions = allIngredients.filter((item) =>
+        item.name.toLowerCase().includes(newIn.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions([]);
+    }
+
     setIngredients((prev) =>
       prev.map((each) => (each.id === id ? { ...each, name: newIn } : each))
     );
@@ -73,32 +105,101 @@ const IngredientList = ({ ingredients, setIngredients }) => {
     });
   };
 
+  const handleSuggestionSelect = (id, selected) => {
+    setIngredients((prev) =>
+      prev.map((each) => (each.id === id ? { ...each, name: selected } : each))
+    );
+    setSuggestions([]);
+    setActiveId(null);
+  };
+
+  const Suggestion = (id, place) => {
+    if (activeId !== id || suggestions.length === 0) {
+      return null;
+    }
+    const pos =
+      place > 451 ? { bottom: place > 500 ? 88 : 144 } : { top: place - 88 };
+    return (
+      <ScrollView style={[styles.suggestionsList, pos]}>
+        {suggestions.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.suggestionItem]}
+            onPress={() => handleSuggestionSelect(id, item.name)}
+          >
+            <Text style={styles.suggestionText}>{item.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    );
+  };
+
   return (
-    <FlatList
-      style={{ position: "relative" }}
-      data={ingredients}
-      keyExtractor={(item) => item.id.toString()}
-      nestedScrollEnabled={true}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-      renderItem={({ item }) => (
-        <IngredientItem
-          id={item.id}
-          name={item.name}
-          amount={item.amount}
-          chosen={item.chosen}
-          unit={item.unit}
-          onChoose={() => handleChosen(item.id)}
-          onChangeName={(moi) => handleChangeName(item.id, moi)}
-          onChangeAmount={(moi) => handleChangeAmount(item.id, moi)}
-          onChangeUnit={() => handleChangeUnit(item.id)}
-          onDelete={() => handleDelete(item.id)}
-        />
-      )}
-    />
+    <View style={{ position: "relative" }}>
+      <FlatList
+        ref={flat}
+        style={{ position: "relative" }}
+        data={ingredients}
+        keyExtractor={(item) => item.id.toString()}
+        nestedScrollEnabled={true}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item, index }) => (
+          <IngredientItem
+            id={item.id}
+            name={item.name}
+            amount={item.amount}
+            chosen={item.chosen}
+            unit={item.unit}
+            onChoose={() => handleChosen(item.id)}
+            onChangeName={(moi) => {
+              handleChangeName(item.id, moi);
+              setActiveIndex(index);
+            }}
+            onChangeAmount={(moi) => handleChangeAmount(item.id, moi)}
+            onChangeUnit={() => handleChangeUnit(item.id)}
+            onDelete={() => handleDelete(item.id)}
+            onSubmit={() => {
+              setActiveId(null);
+              setSuggestions([]);
+            }}
+            onBlur={() => {
+              setTimeout(() => {
+                setActiveId(null);
+                setSuggestions([]);
+              }, 1000);
+            }}
+            setPlace={setPlace}
+          />
+        )}
+      />
+      {Suggestion(activeId, place)}
+    </View>
   );
 };
 
 export default IngredientList;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  suggestionsList: {
+    maxHeight: 200,
+    backgroundColor: COLORS.bg,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: COLORS.text,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 1001,
+    elevation: 5,
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  suggestionText: {
+    color: COLORS.text,
+    fontSize: 18,
+  },
+});

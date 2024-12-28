@@ -1,4 +1,5 @@
 import {
+  Dimensions,
   FlatList,
   Platform,
   ScrollView,
@@ -8,10 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { COLORS } from "../../configs/constants/colors";
 import { StateContext } from "../../context/StateContext";
-
 const IngredientItem = ({
   id,
   name,
@@ -23,11 +23,15 @@ const IngredientItem = ({
   onChangeAmount,
   onChangeUnit,
   onDelete,
+  onSubmit,
+  onBlur,
+  setPlace,
 }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const { allIngredients } = useContext(StateContext);
   const [fc, setFc] = useState(false);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (name.length > 0 && fc) {
@@ -36,11 +40,28 @@ const IngredientItem = ({
       );
       setSuggestions(filteredSuggestions);
       setShowSuggestions(true);
+      if (inputRef.current) {
+        inputRef.current.measureInWindow((x, y, width, height) => {
+          console.log(
+            "X: ",
+            x,
+            "Y: ",
+            y,
+            "Width: ",
+            width,
+            "Height: ",
+            height,
+            "Place: ",
+            y + height
+          );
+          setPlace(y + height);
+        });
+      }
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
     }
-  }, [name, allIngredients]);
+  }, [name, allIngredients, fc]);
   const handleKeyPress = ({ nativeEvent }) => {
     // console.log(nativeEvent.key)
     if (nativeEvent.key === "Backspace" && name.trim() === "") {
@@ -61,13 +82,12 @@ const IngredientItem = ({
         style={[
           styles.ngang,
           {
-            zIndex: 1000 - id,
-            elevation: Platform.OS === "android" ? 1000 - id : 0,
             paddingLeft: 10,
             height: chosen === true && name.trim() ? 58 : 44,
             position: "relative",
           },
         ]}
+        ref={inputRef}
       >
         <View
           style={[
@@ -101,14 +121,15 @@ const IngredientItem = ({
               },
             ]}
             value={name}
-            // onBlur={() => {
-            //   setShowSuggestions(false);
-            //   setFc(false);
-            // }}
             onChangeText={onChangeName}
             onKeyPress={handleKeyPress}
             onFocus={() => setFc(true)}
-            onSubmitEditing={() => setShowSuggestions(false)}
+            onBlur={() => {
+              onBlur();
+              setFc(false);
+            }}
+            onSubmitEditing={onSubmit}
+            // onSubmitEditing={() => setShowSuggestions(false)}
             placeholder="Type something!"
             placeholderTextColor={"#9A7C71"}
             scrollEnabled={false}
@@ -173,8 +194,8 @@ const IngredientItem = ({
             </TouchableOpacity>
           </View>
         )}
-        {showSuggestions && suggestions.length > 0 && (
-          <ScrollView style={styles.suggestionsList}>
+        {/* {showSuggestions && suggestions.length > 0 && (
+          <ScrollView style={[styles.suggestionsList]}>
             {suggestions.map((item) => (
               <TouchableOpacity
                 key={item.ingredient_id}
@@ -185,7 +206,7 @@ const IngredientItem = ({
               </TouchableOpacity>
             ))}
           </ScrollView>
-        )}
+        )} */}
       </View>
     </>
   );
@@ -212,6 +233,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
   },
   suggestionsList: {
+    maxHeight: 200,
     backgroundColor: COLORS.bg,
     borderRadius: 7,
     borderWidth: 2,
