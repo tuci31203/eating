@@ -47,17 +47,20 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <StateProvider>
-        {/* <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, height: '100%' }} edges={['right', 'left', 'top', 'bottom']}> */}
-        <NavigationContainer>
-          <MainApp />
-        </NavigationContainer>
-        {/* </SafeAreaView>
-      </SafeAreaProvider> */}
-      </StateProvider>
-    </AuthProvider>
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { x: 0, y: 0, width: 0, height: 0 },
+        insets: { top: 0, left: 0, right: 0, bottom: 0 },
+      }}
+    >
+      <AuthProvider>
+        <StateProvider>
+          <NavigationContainer>
+            <MainApp />
+          </NavigationContainer>
+        </StateProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
 

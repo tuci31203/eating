@@ -1,10 +1,13 @@
 {
   "expo": {
-    "name": "eating",
-    "slug": "eating",
+    "name": "Eating",
+    "slug": "Eating",
     "extra": {
       "IMAGE_MODEL": "https://hub.ultralytics.com/models/tKyF92FxPJYcF8DbCEKZ",
-      "API_KEY": "5cd2d8847f4196e615f7c3d9e5ee1498cfdb8d80ae"
+      "API_KEY": "5cd2d8847f4196e615f7c3d9e5ee1498cfdb8d80ae",
+      "eas": {
+        "projectId": "aa432edd-6f4c-44c0-a3d3-0c858980c838"
+      }
     },
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,7 +31,7 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": ["INTERNET"],
-      "usesCleartextTraffic": true
+      "package": "com.tuci31203.Eating"
     },
     "web": {
       "favicon": "./assets/favicon.png"
