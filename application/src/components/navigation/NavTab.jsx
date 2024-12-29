@@ -9,13 +9,20 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ICONS } from "../../configs/constants/graphic";
 import IngredientConfirmScreen from "../../screens/ingredient-confirm-screen/IngredientConfirmScreen";
 import SnackIngredient from "./SnackIngredient";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import {
+  CommonActions,
+  useNavigation,
+  useNavigationState,
+} from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
   const navigation = useNavigation();
+  const navigationState = useNavigationState((state) => state);
+  const isAddRoute =
+    navigationState?.routes[navigationState?.index]?.name === "add";
   const resetToHome = () => {
     navigation.dispatch(
       CommonActions.reset({
@@ -185,12 +192,14 @@ const Tabs = () => {
           }}
         />
       </Tab.Navigator>
-      <LinearGradient
-        colors={["transparent", COLORS.bg]}
-        style={styles.gradient}
-        locations={[0.1, 0.5]}
-        pointerEvents="none"
-      />
+      {!isAddRoute && (
+        <LinearGradient
+          colors={["transparent", COLORS.bg]}
+          style={styles.gradient}
+          locations={[0.1, 0.5]}
+          pointerEvents="none"
+        />
+      )}
     </View>
   );
 };

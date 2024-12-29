@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
   botBut: {
     alignSelf: "center", // Đưa nút Login ra giữa theo chiều ngang
-    backgroundColor: COLORS.plusBtn, // Màu nền nút
+    // backgroundColor: COLORS.plusBtn, // Màu nền nút
     paddingVertical: 5, // Chiều cao nút
     paddingHorizontal: 20, // Độ rộng nút
 

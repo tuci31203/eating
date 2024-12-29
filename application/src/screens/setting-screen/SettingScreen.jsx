@@ -12,8 +12,9 @@ const SettingScreen = () => {
       <GreetText>Settings</GreetText>
       <UserInfoRow />
       <SettingOption />
-
-      <Text style={styles.text}>© 2024 Chien, Linh, Viet</Text>
+      <View style={styles.wrap}>
+        <Text style={styles.text}>© 2024 Chien, Linh, Viet</Text>
+      </View>
     </ScreenView>
   );
 };
@@ -21,12 +22,11 @@ const SettingScreen = () => {
 export default SettingScreen;
 
 const styles = StyleSheet.create({
+  wrap: { position: "absolute", bottom: 150, width: "100%" },
   text: {
     fontFamily: "Inter-light",
     fontSize: 12,
     color: COLORS.undertone,
     textAlign: "center",
-    position: "absolute",
-    bottom: 150,
   },
 });
