@@ -58,7 +58,7 @@ const MealList = ({ ScrollViewRef }) => {
   const handleSnacksOpen = () => {
     // Add a small delay to ensure the meal has expanded
     setTimeout(() => {
-      ScrollViewRef.current?.scrollToEnd({ animated: true });
+      ScrollViewRef?.current?.scrollToEnd({ animated: true });
     }, 100);
   };
 

@@ -97,6 +97,16 @@ const IngredientConfirmScreen = () => {
         return defaultIngredients;
       });
       setTodayMeals({ defaultToday });
+
+      // navigation.navigate("home");
+      // setTimeout(() => {
+      //   navigation.dispatch(
+      //     CommonActions.reset({
+      //       index: 0,
+      //       routes: [{ name: "home" }],
+      //     })
+      //   );
+      // }, 100);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

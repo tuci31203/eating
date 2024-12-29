@@ -22,9 +22,9 @@ const IngredientList = ({ ingredients, setIngredients }) => {
   const [place, setPlace] = useState(136);
   const flat = React.useRef(null);
   useEffect(() => {
-    if (flat.current && ingredients.length > 0) {
+    if (flat?.current && ingredients.length > 0) {
       setTimeout(() => {
-        flat.current.scrollToEnd({ animated: true });
+        flat?.current?.scrollToEnd({ animated: true });
       }, 100);
     }
   }, [ingredients.length]);
