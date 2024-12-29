@@ -3,27 +3,11 @@ import React, { useContext, useEffect, useState } from "react";
 import Meal from "./Meal";
 import { StateContext } from "../../context/StateContext";
 import { getTodayMealsApi } from "../../configs/networking/server-api/meal/getToday";
+import { transformTodayMeals } from "../../utils/transformTodayInfo";
 
-const MealList = () => {
-  const { dayInfo, setDayInfo } = useContext(StateContext);
-  const mock = {
-    breakfast: {
-      mealId: 1,
-      ingredients: "Oats, Milk, Banana",
-    },
-    lunch: {
-      mealId: 3,
-      ingredients: "Pork, Noodle, Lettuce, Chilli, Carrot, Raddish, Orange",
-    },
-    dinner: {
-      mealId: 4,
-      ingredients: "",
-    },
-    snack: {
-      mealId: 2,
-      ingredients: "Potato, Tomato, Beef",
-    },
-  };
+const MealList = ({ ScrollViewRef }) => {
+  const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
+  const { todayMeals, setTodayMeals, defaultToday } = useContext(StateContext);
   const [meals, setMeals] = useState({
     breakfast: { mealId: 1, ingredients: "" },
     lunch: { mealId: 2, ingredients: "" },
@@ -34,22 +18,35 @@ const MealList = () => {
   const getMeals = async () => {
     const res = await getTodayMealsApi();
     if (res) {
-      console.log("Meals>>>", res);
-      const meall = res.reduce(
-        (acc, meal) => {
-          acc[meal.type] = {
-            mealId: meal.meal_id,
-            ingredients: meal.ingredients.map((ing) => ing.name).join(", "),
-          };
-          return acc;
-        },
-        {
-          breakfast: { mealId: null, ingredients: "" },
-          lunch: { mealId: null, ingredients: "" },
-          dinner: { mealId: null, ingredients: "" },
-          snack: { mealId: null, ingredients: "" },
-        }
-      );
+      console.log("TODAY Meals>>>", res);
+      // const meall = res.reduce(
+      //   (acc, meal) => {
+      //     acc[meal.type] = {
+      //       mealId: meal.meal_id,
+      //       ingredients: meal.ingredients.map((ing) => ing.name).join(", "),
+      //     };
+      //     return acc;
+      //   },
+      //   {
+      //     breakfast: { mealId: null, ingredients: "" },
+      //     lunch: { mealId: null, ingredients: "" },
+      //     dinner: { mealId: null, ingredients: "" },
+      //     snack: { mealId: null, ingredients: "" },
+      //   }
+      // );
+      const meall = transformTodayMeals(res);
+      console.log("TODAY Meals TRANSFORMED>>>", meall);
+
+      setTodayMeals((prevMeals) => ({
+        ...prevMeals,
+        ...mealTypes.reduce(
+          (acc, type) => ({
+            ...acc,
+            [type]: meall[type].ingredients !== "",
+          }),
+          {}
+        ),
+      }));
       setMeals(meall);
     }
   };
@@ -57,6 +54,13 @@ const MealList = () => {
     getMeals();
     console.log("WHATTT");
   }, []);
+
+  const handleSnacksOpen = () => {
+    // Add a small delay to ensure the meal has expanded
+    setTimeout(() => {
+      ScrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
 
   return (
     <View style={styles.container}>
@@ -83,6 +87,7 @@ const MealList = () => {
         name="Snacks"
         list={meals.snack.ingredients}
         id={meals.snack.mealId}
+        ScrollViewRef={handleSnacksOpen}
       />
     </View>
   );

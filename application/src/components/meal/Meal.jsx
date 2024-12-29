@@ -5,7 +5,7 @@ import { ICONS } from "../../configs/constants/graphic";
 import { deleteMealApi } from "../../configs/networking/server-api/meal/deleteMeal";
 import { useNavigation } from "@react-navigation/native";
 
-const Meal = ({ id, name, list, onChange }) => {
+const Meal = ({ id, name, list, onChange, ScrollViewRef = null }) => {
   const navigation = useNavigation();
   const [expand, setExpand] = useState(false);
   const handleDelete = async () => {
@@ -21,7 +21,13 @@ const Meal = ({ id, name, list, onChange }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity activeOpacity={0.9} onPress={() => setExpand(!expand)}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => {
+          setExpand(!expand);
+          ScrollViewRef();
+        }}
+      >
         <Text style={[styles.title, styles.text]}>{name}</Text>
       </TouchableOpacity>
       {expand && (

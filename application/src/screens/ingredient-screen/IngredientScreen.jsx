@@ -7,6 +7,7 @@ import { useRoute } from "@react-navigation/native";
 import { Button, GreetText, ScreenView, Xmark } from "../../components";
 import { getMealByIdApi } from "../../configs/networking/server-api/meal/getMealById";
 import { COLORS } from "../../configs/constants/colors";
+import * as Burnt from "burnt";
 
 const IngredientScreen = ({ navigation, route }) => {
   // const [ingredients, setIngredients] = useState(defaultIngredients)
@@ -59,6 +60,17 @@ const IngredientScreen = ({ navigation, route }) => {
     const selected = ingredients
       .filter((each) => each.chosen === true)
       .map(({ chosen, ...rest }) => rest);
+    const amount = selected.filter((each) => each.amount == null);
+    console.log("NULL AMOUNT", amount);
+    if (amount.length > 0) {
+      Burnt.toast({
+        title: "You must fill in the amount",
+        message: "Please check your inputs",
+        preset: "error",
+        duration: 2,
+      });
+      return;
+    }
     if (selected.length > 0) {
       setSelectedIngredients(selected);
       // console.log(selected)

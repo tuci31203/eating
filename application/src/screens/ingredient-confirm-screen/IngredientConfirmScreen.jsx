@@ -16,6 +16,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { updateMealApi } from "../../configs/networking/server-api/meal/updateMeal";
+import * as Burnt from "burnt";
 
 const IngredientConfirmScreen = () => {
   const route = useRoute();
@@ -41,12 +42,34 @@ const IngredientConfirmScreen = () => {
     ingredients,
     defaultIngredients,
     setIngredients,
+    todayMeals,
+    setTodayMeals,
+    defaultToday,
   } = useContext(StateContext);
+
+  useEffect(() => {
+    if (mealId) {
+      setTodayMeals({
+        breakfast: true,
+        lunch: true,
+        dinner: true,
+        snack: true,
+      });
+    }
+  }, []);
 
   const selectIngredients = async () => {
     // const selected = ingredients.filter(each => each.chosen === true).map(({ id, ...rest }) => rest)
     // setSelectedIngredients(selected)
     console.log("Ấn rồi");
+    if (meal === "") {
+      Burnt.toast({
+        title: "Please select a meal type",
+        message: "Please select a meal type",
+        type: "error",
+      });
+      return;
+    }
     const currentDate = new Date();
     const offset = 7 * 60 * 60 * 1000; // 7 hours in milliseconds
     const adjustedDate = new Date(currentDate.getTime() + offset);
@@ -73,6 +96,7 @@ const IngredientConfirmScreen = () => {
       setIngredients(() => {
         return defaultIngredients;
       });
+      setTodayMeals({ defaultToday });
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -129,8 +153,8 @@ const IngredientConfirmScreen = () => {
             marginHorizontal: 30,
             marginTop: 17,
             flex: 1,
-            // backgroundColor: 'pink',
-            marginBottom: 400,
+            // backgroundColor: "pink",
+            marginBottom: 450,
           }}
         >
           <ConfirmList

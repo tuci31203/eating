@@ -14,6 +14,12 @@ export const StateProvider = ({ children }) => {
       chosen: false,
     },
   ];
+  const defaultToday = {
+    breakfast: false,
+    lunch: false,
+    dinner: false,
+    snack: false,
+  };
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [ingredients, setIngredients] = useState(defaultIngredients);
   const [dayInfo, setDayInfo] = useState(noInfo);
@@ -21,6 +27,7 @@ export const StateProvider = ({ children }) => {
   const [allIngredients, setAllIngredients] = useState([]);
   const [track, setTrack] = useState(progress);
   const [change, setChange] = useState(false);
+  const [todayMeals, setTodayMeals] = useState(defaultToday);
 
   return (
     <StateContext.Provider
@@ -40,6 +47,9 @@ export const StateProvider = ({ children }) => {
         setTrack,
         change,
         setChange,
+        todayMeals,
+        setTodayMeals,
+        defaultToday,
       }}
     >
       {children}

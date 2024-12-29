@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, View } from "react-native";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { ScrollView } from "react-native";
 import Carousel from "../../components/chart/Carousel";
 import MealList from "../../components/meal/MealList";
@@ -16,6 +16,7 @@ const { width, height } = Dimensions.get("screen");
 const HomeScreen = () => {
   const { allIngredients, setAllIngredients, track, setTrack } =
     useContext(StateContext);
+  const ScrollViewRef = useRef(null);
   useEffect(() => {
     const fetchIngredients = async () => {
       const res = await getAllIngredients();
@@ -40,11 +41,11 @@ const HomeScreen = () => {
   };
   return (
     <ScreenView>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView ref={ScrollViewRef} showsVerticalScrollIndicator={false}>
         <View style={{ gap: 38 }}>
           <GreetText>What do you eat today?</GreetText>
           <Carousel />
-          <MealList />
+          <MealList ScrollViewRef={ScrollViewRef} />
         </View>
       </ScrollView>
     </ScreenView>
