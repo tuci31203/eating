@@ -419,9 +419,10 @@ app.get('/api/getMealsByTimeRange', authenticateToken, async (req, res) => {
 
 
 /**
- * @api {get} /api/getTodayMeals Get today's meals
+ * @api {get} /api/getTodayMeals Get today's meals. "Today" is relative to the server's timezone.
  * @apiName GetTodayMeals
  * @apiGroup Meal
+ * @apiDeprecated This endpoint is deprecated because "today" is relative to the server's timezone, which may not be the same as the user's timezone. Please use /api/getMealsByTimeRange instead.
  * 
  * @apiHeader {String} Authorization JWT token.
  * 
@@ -440,6 +441,9 @@ app.get('/api/getMealsByTimeRange', authenticateToken, async (req, res) => {
  * @apiError (500) ServerError An error occurred on the server.
  */
 app.get('/api/getTodayMeals', authenticateToken, async (req, res) => {
+  res.setHeader('Deprecation', 'true');
+  res.setHeader('Warning', '299 - "Deprecated API: /api/getTodayMeals is deprecated and may be removed soon. This is because "today" as interpreted by this endpoint is relative to the server\'s timezone, which may not be the same as the user\'s timezone. Please use /api/getMealsByTimeRange instead."');
+  
   const userId = req.user.userId;
 
   let client;
@@ -577,7 +581,7 @@ app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
  * @apiGroup Meal
  * 
  * @apiParam {String} type Meal type ("breakfast", "lunch", "dinner", or "snack").
- * @apiParam {Date|String} datetime Meal datetime.
+ * @apiParam {Date|String} datetime Meal datetime with time zone. Javascript Date object or ISO 8601 string.
  * @apiParam {Object[]} [ingredients] List of ingredients.
  * @apiParam {String} ingredients.name Ingredient name.
  * @apiParam {Number} ingredients.amount Ingredient amount.
@@ -698,7 +702,7 @@ app.post('/api/createMeal', authenticateToken, async (req, res) => {
  * 
  * @apiParam {Number} meal_id Meal ID.
  * @apiParam {String} [type] Meal type.
- * @apiParam {Date|String} [datetime] Meal datetime.
+ * @apiParam {Date|String} [datetime] Meal datetime with timezone. Javascript Date object or ISO 8601 string.
  * @apiParam {Object[]} [ingredients] List of ingredients.
  * @apiParam {String} ingredients.name Ingredient name.
  * @apiParam {Number} ingredients.amount Ingredient amount.
