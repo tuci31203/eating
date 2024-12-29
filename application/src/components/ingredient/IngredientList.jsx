@@ -1,5 +1,4 @@
 import {
-  Dimensions,
   FlatList,
   Platform,
   ScrollView,
