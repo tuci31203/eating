@@ -25,7 +25,7 @@ const Meal = ({ id, name, list, onChange, ScrollViewRef = null }) => {
         activeOpacity={0.9}
         onPress={() => {
           setExpand(!expand);
-          ScrollViewRef();
+          if (ScrollViewRef) ScrollViewRef();
         }}
       >
         <Text style={[styles.title, styles.text]}>{name}</Text>
