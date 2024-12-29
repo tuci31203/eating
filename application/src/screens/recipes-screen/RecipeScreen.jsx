@@ -48,7 +48,7 @@ export default RecipeScreen;
 const styles = StyleSheet.create({
   botBut: {
     position: "absolute",
-    bottom: 53,
+    bottom: 73,
     right: 40,
   },
 });
