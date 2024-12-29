@@ -78,9 +78,24 @@ const IngredientList = ({ ingredients, setIngredients }) => {
     );
   };
   const handleChangeAmount = (id, newIn) => {
-    setIngredients((prev) =>
-      prev.map((each) => (each.id === id ? { ...each, amount: newIn } : each))
-    );
+    const sanitizedText = newIn.replace(/[^0-9.]/g, "");
+
+    const parts = sanitizedText.split(".");
+    const cleanText = parts[0] + (parts.length > 1 ? "." + parts[1] : "");
+
+    if (
+      cleanText === "" ||
+      (Number(cleanText) >= 0 && !isNaN(Number(cleanText)))
+    ) {
+      setIngredients((prev) =>
+        prev.map((each) =>
+          each.id === id ? { ...each, amount: cleanText } : each
+        )
+      );
+    }
+    // setIngredients((prev) =>
+    //   prev.map((each) => (each.id === id ? { ...each, amount: newIn } : each))
+    // );
   };
   const handleChangeUnit = (id) => {
     // setIngredients((prev) =>
