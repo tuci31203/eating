@@ -113,12 +113,11 @@ const IngredientList = ({ ingredients, setIngredients }) => {
     setActiveId(null);
   };
 
-  const Suggestion = (id, place) => {
+  const Suggestion = (id, index) => {
     if (activeId !== id || suggestions.length === 0) {
       return null;
     }
-    const pos =
-      place > 451 ? { bottom: place > 500 ? 88 : 144 } : { top: place - 88 };
+    const pos = index > 5 ? { bottom: 50 } : { top: 50 };
     return (
       <ScrollView style={[styles.suggestionsList, pos]}>
         {suggestions.map((item, index) => (
@@ -135,16 +134,16 @@ const IngredientList = ({ ingredients, setIngredients }) => {
   };
 
   return (
-    <View style={{ position: "relative" }}>
-      <FlatList
-        ref={flat}
-        style={{ position: "relative" }}
-        data={ingredients}
-        keyExtractor={(item) => item.id.toString()}
-        nestedScrollEnabled={true}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item, index }) => (
+    <FlatList
+      ref={flat}
+      style={{ position: "relative" }}
+      data={ingredients}
+      keyExtractor={(item) => item.id.toString()}
+      nestedScrollEnabled={true}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      renderItem={({ item, index }) => (
+        <View>
           <IngredientItem
             id={item.id}
             name={item.name}
@@ -171,10 +170,10 @@ const IngredientList = ({ ingredients, setIngredients }) => {
             }}
             setPlace={setPlace}
           />
-        )}
-      />
-      {Suggestion(activeId, place)}
-    </View>
+          {Suggestion(item.id, index)}
+        </View>
+      )}
+    />
   );
 };
 
@@ -182,7 +181,7 @@ export default IngredientList;
 
 const styles = StyleSheet.create({
   suggestionsList: {
-    width: "50%",
+    width: "100%",
     maxHeight: 200,
     backgroundColor: COLORS.bg,
     borderRadius: 7,
