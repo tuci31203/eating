@@ -109,6 +109,23 @@ const HomeChart = ({ inData, variant, goal }) => {
                 }}
               >
                 {goal}
+                {variant === "Calory" && (
+                  <View
+                    style={{
+                      paddingBottom: 1,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Inter-Regular",
+                        fontSize: 14,
+                        color: COLORS.text,
+                      }}
+                    >
+                      k
+                    </Text>
+                  </View>
+                )}
               </Text>
               <Text
                 style={{
