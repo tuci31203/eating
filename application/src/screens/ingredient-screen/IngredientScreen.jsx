@@ -55,11 +55,17 @@ const IngredientScreen = ({ navigation, route }) => {
 
   const selectIngredients = () => {
     setIngredients((prev) =>
-      prev.map((each) => ({ ...each, name: each.name.trim() }))
+      prev.map((each) => ({ ...each, name: each.name.trim().toLowerCase() }))
     );
     const selected = ingredients
       .filter((each) => each.chosen === true)
-      .map(({ chosen, ...rest }) => rest);
+      .map(({ chosen, ...rest }) => ({
+        ...rest,
+        name: rest.name.trim().toLowerCase(),
+      }));
+    // const selected = ingredients
+    //   .filter((each) => each.chosen === true)
+    //   .map(({ chosen, ...rest }) => rest);
     const amount = selected.filter((each) => each.amount == null);
     console.log("NULL AMOUNT", amount);
     if (amount.length > 0) {
@@ -71,8 +77,23 @@ const IngredientScreen = ({ navigation, route }) => {
       });
       return;
     }
-    if (selected.length > 0) {
-      setSelectedIngredients(selected);
+
+    const combinedIngredients = selected.reduce((acc, current) => {
+      const existingIngredient = acc.find((item) => item.name === current.name);
+
+      if (existingIngredient) {
+        existingIngredient.amount = (
+          parseFloat(existingIngredient.amount) + parseFloat(current.amount)
+        ).toString();
+      } else {
+        acc.push({ ...current });
+      }
+
+      return acc;
+    }, []);
+
+    if (combinedIngredients.length > 0) {
+      setSelectedIngredients(combinedIngredients);
       // console.log(selected)
       navigation.navigate("confirm", {
         mealId: mealId,
