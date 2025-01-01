@@ -419,9 +419,10 @@ app.get('/api/getMealsByTimeRange', authenticateToken, async (req, res) => {
 
 
 /**
- * @api {get} /api/getTodayMeals Get today's meals
+ * @api {get} /api/getTodayMeals Get today's meals. "Today" is relative to the server's timezone.
  * @apiName GetTodayMeals
  * @apiGroup Meal
+ * @apiDeprecated This endpoint is deprecated because "today" is relative to the server's timezone, which may not be the same as the user's timezone. Please use /api/getMealsByTimeRange instead.
  * 
  * @apiHeader {String} Authorization JWT token.
  * 
@@ -440,6 +441,9 @@ app.get('/api/getMealsByTimeRange', authenticateToken, async (req, res) => {
  * @apiError (500) ServerError An error occurred on the server.
  */
 app.get('/api/getTodayMeals', authenticateToken, async (req, res) => {
+  res.setHeader('Deprecation', 'true');
+  res.setHeader('Warning', '299 - "Deprecated API: /api/getTodayMeals is deprecated and may be removed soon. This is because "today" as interpreted by this endpoint is relative to the server\'s timezone, which may not be the same as the user\'s timezone. Please use /api/getMealsByTimeRange instead."');
+  
   const userId = req.user.userId;
 
   let client;
@@ -577,10 +581,10 @@ app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
  * @apiGroup Meal
  * 
  * @apiParam {String} type Meal type ("breakfast", "lunch", "dinner", or "snack").
- * @apiParam {Date|String} datetime Meal datetime.
+ * @apiParam {Date|String} datetime Meal timestamp with time zone. Javascript Date object or ISO 8601 string (e.g. '2024-12-26T14:30:57+07:00').
  * @apiParam {Object[]} [ingredients] List of ingredients.
  * @apiParam {String} ingredients.name Ingredient name.
- * @apiParam {Number} ingredients.amount Ingredient amount.
+ * @apiParam {Number} ingredients.amount Ingredient amount. Must be a positive number.
  * @apiParam {Boolean} [aggregate=false] Whether to aggregate ingredient amounts automatically if duplicates are found.
  * 
  * @apiHeader {String} Authorization JWT token.
@@ -591,6 +595,7 @@ app.get('/api/getMealbyId', authenticateToken, async (req, res) => {
  * @apiError (400) InvalidInput Missing or invalid input parameters.
  * @apiError (400) InvalidUserID Invalid user id.
  * @apiError (400) InvalidIngredients Invalid ingredients.
+ * @apiError (400) InvalidAmount Invalid ingredient amount.
  * @apiError (401) Unauthorized Access denied.
  * @apiError (403) Forbidden Invalid token.
  * @apiError (409) Conflict Meal with same user id, type, and datetime truncated to minute already exists.
@@ -608,16 +613,20 @@ app.post('/api/createMeal', authenticateToken, async (req, res) => {
   // Aggregate ingredient amounts or respond with an error if duplicates are found
   const aggregatedIngredients = {};
   for (const ingredient of ingredients) {
+    const amount = Number(ingredient.amount);
+    if (isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ error: `Invalid amount for ingredient ${ingredient.name}. Ingredient amount must be a positive number.` });
+    }
     if (aggregatedIngredients[ingredient.name]) { // Duplicate ingredient found
       if (aggregate) {
-        aggregatedIngredients[ingredient.name] += ingredient.amount;
+        aggregatedIngredients[ingredient.name] += amount;
       }
       else {
         return res.status(400).json({ error: 'Duplicate ingredient in meal' });
       }
     }
     else {
-      aggregatedIngredients[ingredient.name] = ingredient.amount;
+      aggregatedIngredients[ingredient.name] = amount;
     }
   }
 
@@ -698,10 +707,10 @@ app.post('/api/createMeal', authenticateToken, async (req, res) => {
  * 
  * @apiParam {Number} meal_id Meal ID.
  * @apiParam {String} [type] Meal type.
- * @apiParam {Date|String} [datetime] Meal datetime.
- * @apiParam {Object[]} [ingredients] List of ingredients.
+ * @apiParam {Date|String} [datetime] Meal timestamp with time zone. Javascript Date object or ISO 8601 string (e.g. '2024-12-26T14:30:57+07:00').
+ * @apiParam {Object[]} [ingredients] List of ingredients to replace existing ingredients.
  * @apiParam {String} ingredients.name Ingredient name.
- * @apiParam {Number} ingredients.amount Ingredient amount.
+ * @apiParam {Number} ingredients.amount Ingredient amount. Must be a positive number.
  * @apiParam {Boolean} [aggregate=false] Whether to aggregate ingredient amounts if duplicates are found.
  * 
  * @apiHeader {String} Authorization JWT token.
@@ -712,10 +721,11 @@ app.post('/api/createMeal', authenticateToken, async (req, res) => {
  * @apiError (400) InvalidInput Missing or invalid input parameters.
  * @apiError (400) InvalidUserID Invalid user id.
  * @apiError (400) InvalidIngredients Invalid ingredients.
+ * @apiError (400) InvalidAmount Invalid ingredient amount.
  * @apiError (404) NotFound Meal not found in database.
  * @apiError (401) Unauthorized Access denied.
  * @apiError (403) Forbidden Invalid token.
- * @apiError (409) Conflict Meal with same user id, type, and datetime truncated to minute already exists.
+ * @apiError (409) Conflict Another meal with same user id, type, and datetime truncated to minute already exists.
  * @apiError (500) ServerError An error occurred on the server.
  */
 app.put('/api/updateMeal', authenticateToken, async (req, res) => {
@@ -729,19 +739,21 @@ app.put('/api/updateMeal', authenticateToken, async (req, res) => {
 
   // Aggregate ingredient amounts or respond with an error if duplicates are found
   const aggregatedIngredients = {};
-  if (ingredients) {
-    for (const ingredient of ingredients) {
-      if (aggregatedIngredients[ingredient.name]) {
-        if (aggregate) {
-          aggregatedIngredients[ingredient.name] += ingredient.amount;
-        }
-        else {
-          return res.status(400).json({ error: 'Duplicate ingredient in meal' });
-        }
+  for (const ingredient of ingredients) {
+    const amount = Number(ingredient.amount);
+    if (isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ error: `Invalid amount for ingredient ${ingredient.name}. Ingredient amount must be a positive number.` });
+    }
+    if (aggregatedIngredients[ingredient.name]) { // Duplicate ingredient found
+      if (aggregate) {
+        aggregatedIngredients[ingredient.name] += amount;
       }
       else {
-        aggregatedIngredients[ingredient.name] = ingredient.amount;
+        return res.status(400).json({ error: 'Duplicate ingredient in meal' });
       }
+    }
+    else {
+      aggregatedIngredients[ingredient.name] = amount;
     }
   }
 
@@ -766,7 +778,7 @@ app.put('/api/updateMeal', authenticateToken, async (req, res) => {
       }
     }
 
-    // Update meal details if provided
+    // Update meal details if meal details are provided, meal exists, and user_id matches the user_id in the JWT
     const updateFieldTexts = [];
     const updateValues = [];
     let fieldIndex = 2; // index of the $ placeholder in SQL update query, starts at index 2 since meal_id is at index 1
@@ -798,8 +810,8 @@ app.put('/api/updateMeal', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Access denied' });
       }
     }
+    // if no meal details are updated, check if the meal exists and if the user_id matches the user_id in the JWT
     else {
-      // if no meal details are updated, check if the meal exists and if the user_id matches the user_id in the JWT
       const mealResult = await client.query(`
         SELECT user_id
         FROM meal
