@@ -39,6 +39,5 @@ yarn-error.*
 assets/
 
 *.txt
-app.json
 api.json
 eas.json
